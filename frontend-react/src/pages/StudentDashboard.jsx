@@ -131,7 +131,7 @@ export default function StudentDashboard() {
               <div className="card">
                 <div className="card-header">
                   <div className="card-title"><div className="card-icon">—</div>Recent Applications</div>
-                  <button className="btn btn-ghost btn-sm" onClick={() => setPage('history')}>View All →</button>
+                  <button className="btn btn-ghost btn-sm" onClick={() => setPage('history')}>View All -></button>
                 </div>
                 <div className="table-wrap">
                   <table><thead><tr><th>Type</th><th>Dates</th><th>Days</th><th>Status</th></tr></thead>
@@ -139,7 +139,7 @@ export default function StudentDashboard() {
                     {leaves.slice(-5).reverse().map(l => (
                       <tr key={l.id}>
                         <td style={{ textTransform:'capitalize' }}>{l.type}</td>
-                        <td>{l.from}{l.from !== l.to ? ' → ' + l.to : ''}</td>
+                        <td>{l.from}{l.from !== l.to ? ' -> ' + l.to : ''}</td>
                         <td>{l.days}d</td>
                         <td><span className={`badge badge-${l.status.toLowerCase()}`}>{l.status}</span></td>
                       </tr>
@@ -151,7 +151,7 @@ export default function StudentDashboard() {
               <div className="card">
                 <div className="card-header">
                   <div className="card-title"><div className="card-icon">—</div>Notifications</div>
-                  <button className="btn btn-ghost btn-sm" onClick={() => { setPage('notifications'); markNotifsRead() }}>All →</button>
+                  <button className="btn btn-ghost btn-sm" onClick={() => { setPage('notifications'); markNotifsRead() }}>All -></button>
                 </div>
                 {notifs.slice(0, 4).map(n => (
                   <div key={n.id} className="notif-item">
@@ -214,7 +214,7 @@ export default function StudentDashboard() {
                 </div>
               </div>
               <div style={{ display:'flex', gap:'.75rem', marginTop:'.75rem', flexWrap:'wrap' }}>
-                <button className="btn btn-primary" onClick={submitLeave}>Submit Application →</button>
+                <button className="btn btn-primary" onClick={submitLeave}>Submit Application -></button>
                 <button className="btn btn-secondary" onClick={() => { setLeaveType(''); setReason(''); setFromDate(today); setToDate(today) }}>Clear Form</button>
               </div>
             </div>
@@ -289,7 +289,7 @@ export default function StudentDashboard() {
                       <span className="upcoming-title">{l.type} Leave</span>
                       <span className={`badge badge-${l.status.toLowerCase()}`}>{l.status}</span>
                     </div>
-                    <p className="upcoming-meta">{l.from}{l.from!==l.to?' → '+l.to:''} · {l.days} day{l.days>1?'s':''}</p>
+                    <p className="upcoming-meta">{l.from}{l.from!==l.to?' -> '+l.to:''} · {l.days} day{l.days>1?'s':''}</p>
                   </div>
                 ))}
                 {!leaves.filter(l => new Date(l.from+'T00:00:00') >= new Date() && l.status !== 'Rejected').length &&
@@ -345,3 +345,5 @@ export default function StudentDashboard() {
     </div>
   )
 }
+
+

@@ -198,18 +198,16 @@ export default function Login() {
             </div>
           )}
 
-          {/* ── SUCCESS MESSAGE ── */}
           {success && (
             <div style={S.alertSuccess}>
-              <div style={{ ...S.alertIcon, background:'rgba(52,211,153,.25)', color:'#34d399' }}>✓</div>
+              <div style={{ ...S.alertIcon, background:'#a7f3d0', color:'#065f46' }}>OK</div>
               <span>{success}</span>
             </div>
           )}
 
-          {/* ── ERROR MESSAGE ── */}
           {error && (
             <div style={S.alertError}>
-              <div style={{ ...S.alertIcon, background:'rgba(248,113,113,.25)', color:'#f87171' }}>!</div>
+              <div style={{ ...S.alertIcon, background:'#fecaca', color:'#991b1b' }}>!</div>
               <span>{error}</span>
             </div>
           )}
@@ -324,3 +322,4 @@ export default function Login() {
     </div>
   )
 }
+
