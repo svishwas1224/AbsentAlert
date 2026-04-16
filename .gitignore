@@ -2,3 +2,11 @@
 *.log
 .DS_Store
 Thumbs.db
+__pycache__/
+*.pyc
+*.pyo
+backend/*.db
+backend/instance/
+frontend-react/node_modules/
+frontend-react/dist/
+.env
