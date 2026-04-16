@@ -1,0 +1,47 @@
+{
+  "users": [
+    {
+      "id": "CS2021045",
+      "name": "Arjun Sharma",
+      "email": "student@demo.com",
+      "password": "1234",
+      "role": "student",
+      "dept": "Computer Science",
+      "year": "3rd Year",
+      "faculty": "Dr. Priya Nair"
+    },
+    {
+      "id": "FAC2015",
+      "name": "Dr. Priya Nair",
+      "email": "faculty@demo.com",
+      "password": "1234",
+      "role": "faculty",
+      "dept": "Computer Science",
+      "designation": "Associate Professor"
+    }
+  ],
+  "students": [
+    { "name": "Arjun Sharma",  "id": "CS2021045", "year": "3rd", "leavesUsed": 5, "attendance": 86 },
+    { "name": "Meera Patel",   "id": "CS2021012", "year": "3rd", "leavesUsed": 3, "attendance": 92 },
+    { "name": "Rohan Desai",   "id": "CS2021033", "year": "3rd", "leavesUsed": 8, "attendance": 78 },
+    { "name": "Sneha Iyer",    "id": "CS2021067", "year": "3rd", "leavesUsed": 2, "attendance": 95 },
+    { "name": "Karan Singh",   "id": "CS2021089", "year": "3rd", "leavesUsed": 6, "attendance": 81 },
+    { "name": "Priya Menon",   "id": "CS2021054", "year": "3rd", "leavesUsed": 1, "attendance": 97 },
+    { "name": "Dev Kapoor",    "id": "CS2021071", "year": "3rd", "leavesUsed": 4, "attendance": 88 },
+    { "name": "Ananya Rao",    "id": "CS2021028", "year": "3rd", "leavesUsed": 7, "attendance": 75 }
+  ],
+  "leaves": [
+    { "id": 1, "type": "medical",  "from": "2026-03-05", "to": "2026-03-06", "days": 2, "reason": "Fever and cold",                 "status": "Approved", "remarks": "Approved. Get well soon!", "ts": "2026-03-04" },
+    { "id": 2, "type": "personal", "from": "2026-03-18", "to": "2026-03-18", "days": 1, "reason": "Family function",                "status": "Approved", "remarks": "Approved.",                 "ts": "2026-03-17" },
+    { "id": 3, "type": "academic", "from": "2026-04-10", "to": "2026-04-11", "days": 2, "reason": "State-level coding competition", "status": "Approved", "remarks": "Approved. All the best!",   "ts": "2026-04-08" },
+    { "id": 4, "type": "personal", "from": "2026-04-20", "to": "2026-04-21", "days": 2, "reason": "Visiting relatives",             "status": "Pending",  "remarks": "—",                         "ts": "2026-04-15" },
+    { "id": 5, "type": "medical",  "from": "2026-04-28", "to": "2026-04-28", "days": 1, "reason": "Doctor appointment",             "status": "Pending",  "remarks": "—",                         "ts": "2026-04-15" }
+  ],
+  "notifications": [
+    { "type": "approved", "msg": "Your leave for Apr 10–11 has been approved!",  "time": "2 days ago",  "read": false },
+    { "type": "pending",  "msg": "Leave application for Apr 20–21 submitted.",   "time": "1 day ago",   "read": false },
+    { "type": "pending",  "msg": "Leave application for Apr 28 submitted.",      "time": "1 day ago",   "read": false },
+    { "type": "approved", "msg": "Leave for Mar 18 was approved.",               "time": "4 weeks ago", "read": true  },
+    { "type": "approved", "msg": "Medical leave for Mar 5–6 was approved.",      "time": "6 weeks ago", "read": true  }
+  ]
+}

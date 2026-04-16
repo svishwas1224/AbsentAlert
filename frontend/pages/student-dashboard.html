@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>LeaveFlow — Student Dashboard</title>
+  <link rel="stylesheet" href="../assets/styles/main.css"/>
+  <link rel="stylesheet" href="../assets/styles/components.css"/>
+  <link rel="stylesheet" href="../assets/styles/dashboard.css"/>
+</head>
+<body class="dash">
+<div class="bg-mesh"></div><div class="bg-grid"></div>
+<div id="toast-container" class="toast-container"></div>
+<button class="mobile-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open')">☰</button>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-mark">📋</div>
+    <div class="brand-text"><h2>Leave<span>Flow</span></h2><p>Student Portal</p></div>
+  </div>
+  <div class="sidebar-user">
+    <div class="sidebar-avatar student" id="s-avatar">AS</div>
+    <div class="sidebar-user-info">
+      <div class="sidebar-user-name" id="s-sidebar-name">Arjun Sharma</div>
+      <div class="sidebar-user-meta" id="s-sidebar-meta">CS2021045 · 3rd Year</div>
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">Main</div>
+    <div class="nav-item active"  onclick="sShowPage('dashboard')"><span class="nav-icon">🏠</span>Dashboard</div>
+    <div class="nav-item"         onclick="sShowPage('apply')"><span class="nav-icon">✍️</span>Apply Leave</div>
+    <div class="nav-item"         onclick="sShowPage('history')"><span class="nav-icon">📋</span>Leave History</div>
+    <div class="nav-section">Tools</div>
+    <div class="nav-item"         onclick="sShowPage('calendar')"><span class="nav-icon">📅</span>Calendar</div>
+    <div class="nav-item"         onclick="sShowPage('notifications')">
+      <span class="nav-icon">🔔</span>Notifications
+      <span class="nav-badge" id="s-notif-badge" style="display:none">0</span>
+    </div>
+    <div class="nav-section">Account</div>
+    <div class="nav-item"         onclick="sShowPage('profile')"><span class="nav-icon">👤</span>Profile</div>
+  </nav>
+  <div class="sidebar-footer">
+    <button class="btn-logout" onclick="logout()">↩ &nbsp;Sign Out</button>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+
+  <!-- DASHBOARD -->
+  <div class="page active" id="s-page-dashboard">
+    <div class="topbar">
+      <div class="topbar-left">
+        <h1 id="s-welcome">Good morning, Arjun 👋</h1>
+        <p>Here's your leave status at a glance</p>
+      </div>
+      <div class="topbar-right">
+        <button class="btn btn-secondary btn-sm" onclick="sShowPage('apply')">+ New Application</button>
+      </div>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card c-teal">
+        <div class="stat-icon">🗓️</div>
+        <div class="stat-value" id="s-stat-remaining">10</div>
+        <div class="stat-label">Remaining Leaves</div>
+        <div class="stat-sub">of 15 total quota</div>
+        <div class="progress-wrap" style="margin-top:.75rem">
+          <div class="progress-fill teal" id="s-quota-bar" style="width:33%"></div>
+        </div>
+      </div>
+      <div class="stat-card c-yellow">
+        <div class="stat-icon">⏳</div>
+        <div class="stat-value" id="s-stat-pending">2</div>
+        <div class="stat-label">Pending</div>
+        <div class="stat-sub">awaiting approval</div>
+      </div>
+      <div class="stat-card c-teal">
+        <div class="stat-icon">✅</div>
+        <div class="stat-value" id="s-stat-approved">3</div>
+        <div class="stat-label">Approved</div>
+        <div class="stat-sub">this semester</div>
+      </div>
+      <div class="stat-card c-red">
+        <div class="stat-icon">❌</div>
+        <div class="stat-value" id="s-stat-rejected">0</div>
+        <div class="stat-label">Rejected</div>
+        <div class="stat-sub">this semester</div>
+      </div>
+    </div>
+    <div class="grid-2-1">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><div class="icon">📋</div>Recent Applications</div>
+          <button class="btn btn-ghost btn-sm" onclick="sShowPage('history')">View All →</button>
+        </div>
+        <div class="table-wrap">
+          <table><thead><tr><th>Type</th><th>Dates</th><th>Days</th><th>Status</th></tr></thead>
+          <tbody id="s-recent-table"></tbody></table>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><div class="icon">🔔</div>Notifications</div>
+          <button class="btn btn-ghost btn-sm" onclick="sShowPage('notifications')">All →</button>
+        </div>
+        <div id="s-dash-notifs"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- APPLY LEAVE -->
+  <div class="page" id="s-page-apply">
+    <div class="topbar">
+      <div class="topbar-left">
+        <h1>Apply for Leave</h1>
+        <p>Fill in the details — your faculty will be notified automatically</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="margin-bottom:1.5rem"><div class="icon">✍️</div>Leave Application Form</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">Leave Type</label>
+          <select class="form-control" id="s-leave-type">
+            <option value="">Select type…</option>
+            <option value="medical">🏥 Medical / Health</option>
+            <option value="personal">👤 Personal</option>
+            <option value="family">👨‍👩‍👧 Family Emergency</option>
+            <option value="academic">🎓 Academic Event</option>
+            <option value="sports">🏆 Sports / Cultural</option>
+            <option value="other">📌 Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Days Required</label>
+          <input type="number" class="form-control" id="s-leave-days" placeholder="Auto-calculated" readonly/>
+        </div>
+      </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">From Date</label>
+          <input type="date" class="form-control" id="s-from-date" onchange="sCalcDays()"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">To Date</label>
+          <input type="date" class="form-control" id="s-to-date" onchange="sCalcDays()"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Reason / Description</label>
+        <textarea class="form-control" id="s-reason" placeholder="Briefly explain your reason for leave…"></textarea>
+      </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">Faculty / Mentor (Auto-assigned)</label>
+          <input type="text" class="form-control" id="s-faculty-name" readonly/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Supporting Document (Optional)</label>
+          <input type="file" class="form-control" id="s-doc-upload"/>
+        </div>
+      </div>
+      <div style="display:flex;gap:.75rem;margin-top:.75rem;flex-wrap:wrap;">
+        <button class="btn btn-primary" onclick="sSubmitLeave()">Submit Application →</button>
+        <button class="btn btn-secondary" onclick="sClearForm()">Clear Form</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- LEAVE HISTORY -->
+  <div class="page" id="s-page-history">
+    <div class="topbar">
+      <div class="topbar-left">
+        <h1>Leave History</h1>
+        <p>All your submitted leave applications</p>
+      </div>
+    </div>
+    <div class="card">
+      <div style="display:flex;gap:.75rem;margin-bottom:1.25rem;flex-wrap:wrap;align-items:center;">
+        <select class="form-control" style="width:auto;padding:.45rem .85rem;font-size:.82rem;" id="s-filter-status" onchange="sRenderHistory()">
+          <option value="all">All Status</option>
+          <option value="Pending">Pending</option>
+          <option value="Approved">Approved</option>
+          <option value="Rejected">Rejected</option>
+        </select>
+        <select class="form-control" style="width:auto;padding:.45rem .85rem;font-size:.82rem;" id="s-filter-type" onchange="sRenderHistory()">
+          <option value="all">All Types</option>
+          <option value="medical">Medical</option>
+          <option value="personal">Personal</option>
+          <option value="family">Family</option>
+          <option value="academic">Academic</option>
+          <option value="sports">Sports</option>
+        </select>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>#</th><th>Type</th><th>From</th><th>To</th><th>Days</th><th>Reason</th><th>Status</th><th>Remarks</th></tr></thead>
+          <tbody id="s-history-table"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- CALENDAR -->
+  <div class="page" id="s-page-calendar">
+    <div class="topbar"><div class="topbar-left"><h1>Leave Calendar</h1><p>Visual overview of your leave dates</p></div></div>
+    <div class="grid-1-1">
+      <div class="card">
+        <div class="cal-nav">
+          <button class="cal-nav-btn" onclick="sPrevMonth()">‹</button>
+          <h3 id="s-cal-title">April 2026</h3>
+          <button class="cal-nav-btn" onclick="sNextMonth()">›</button>
+        </div>
+        <div class="cal-grid">
+          <div class="cal-day-label">Su</div><div class="cal-day-label">Mo</div><div class="cal-day-label">Tu</div>
+          <div class="cal-day-label">We</div><div class="cal-day-label">Th</div><div class="cal-day-label">Fr</div>
+          <div class="cal-day-label">Sa</div>
+        </div>
+        <div class="cal-grid" id="s-cal-grid"></div>
+        <div class="cal-legend">
+          <div class="cal-legend-item"><div class="cal-legend-dot" style="background:var(--teal-dim);border:1px solid rgba(45,212,191,.3)"></div>Today</div>
+          <div class="cal-legend-item"><div class="cal-legend-dot" style="background:var(--pending-bg)"></div>Leave Day</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="margin-bottom:1rem"><div class="icon">📌</div>Upcoming Leaves</div>
+        <div id="s-upcoming"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NOTIFICATIONS -->
+  <div class="page" id="s-page-notifications">
+    <div class="topbar"><div class="topbar-left"><h1>Notifications</h1><p>Updates on your leave applications</p></div></div>
+    <div class="card">
+      <div id="s-all-notifs"></div>
+    </div>
+  </div>
+
+  <!-- PROFILE -->
+  <div class="page" id="s-page-profile">
+    <div class="topbar"><div class="topbar-left"><h1>My Profile</h1><p>Your academic information</p></div></div>
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:1.25rem;margin-bottom:1.5rem;padding-bottom:1.5rem;border-bottom:1px solid var(--border);">
+        <div class="avatar-lg avatar-student" id="s-profile-avatar">AS</div>
+        <div>
+          <p style="font-size:1.2rem;font-weight:600;color:var(--text-1);" id="s-profile-name">Arjun Sharma</p>
+          <p style="color:var(--text-3);font-size:.875rem;margin-top:.2rem;" id="s-profile-sub">Computer Science · 3rd Year</p>
+        </div>
+      </div>
+      <div class="profile-grid">
+        <div class="profile-field"><label>Roll Number</label><p id="s-pf-id">CS2021045</p></div>
+        <div class="profile-field"><label>Department</label><p id="s-pf-dept">Computer Science</p></div>
+        <div class="profile-field"><label>Year</label><p id="s-pf-year">3rd Year</p></div>
+        <div class="profile-field"><label>Faculty Mentor</label><p id="s-pf-faculty">Dr. Priya Nair</p></div>
+        <div class="profile-field"><label>Email</label><p>student@demo.com</p></div>
+        <div class="profile-field"><label>Leave Quota</label><p>15 days / semester</p></div>
+      </div>
+      <div style="margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid var(--border);">
+        <div class="card-title" style="margin-bottom:1rem"><div class="icon">📊</div>Attendance Summary</div>
+        <div class="stats-grid">
+          <div class="stat-card c-teal"><div class="stat-icon">📈</div><div class="stat-value">86%</div><div class="stat-label">Attendance</div><div class="stat-sub">this semester</div></div>
+          <div class="stat-card"><div class="stat-icon">🏫</div><div class="stat-value">142</div><div class="stat-label">Total Classes</div><div class="stat-sub">conducted</div></div>
+          <div class="stat-card c-yellow"><div class="stat-icon">📅</div><div class="stat-value">5</div><div class="stat-label">Days Absent</div><div class="stat-sub">this semester</div></div>
+          <div class="stat-card c-blue"><div class="stat-icon">🔥</div><div class="stat-value">12</div><div class="stat-label">Day Streak</div><div class="stat-sub">present</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script src="../assets/scripts/storage.js"></script>
+<script src="../assets/scripts/student.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const user = Storage.getUser();
+    if (!user || user.role !== 'student') { window.location.href = '../../index.html'; return; }
+    Storage.seed();
+    initStudent();
+  });
+  function showToast(title, msg, type='success') {
+    const icons = {success:'✅',error:'❌',warning:'⚠️',info:'ℹ️'};
+    const t = document.createElement('div');
+    t.className = `toast t-${type}`;
+    t.innerHTML = `<span class="toast-icon">${icons[type]}</span><div class="toast-content"><div class="toast-title">${title}</div><div class="toast-msg">${msg}</div></div>`;
+    document.getElementById('toast-container').appendChild(t);
+    requestAnimationFrame(() => requestAnimationFrame(() => t.classList.add('show')));
+    setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 500); }, 3800);
+  }
+  function logout() { Storage.clearUser(); window.location.href = '../../index.html'; }
+</script>
+</body>
+</html>

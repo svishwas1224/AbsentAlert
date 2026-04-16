@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>LeaveFlow — Faculty Dashboard</title>
+  <link rel="stylesheet" href="../assets/styles/main.css"/>
+  <link rel="stylesheet" href="../assets/styles/components.css"/>
+  <link rel="stylesheet" href="../assets/styles/dashboard.css"/>
+</head>
+<body class="dash">
+<div class="bg-mesh"></div><div class="bg-grid"></div>
+<div id="toast-container" class="toast-container"></div>
+<button class="mobile-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open')">☰</button>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-mark">📋</div>
+    <div class="brand-text"><h2>Leave<span>Flow</span></h2><p>Faculty Portal</p></div>
+  </div>
+  <div class="sidebar-user">
+    <div class="sidebar-avatar faculty" id="f-avatar">PN</div>
+    <div class="sidebar-user-info">
+      <div class="sidebar-user-name" id="f-name">Dr. Priya Nair</div>
+      <div class="sidebar-user-meta" id="f-meta">Associate Professor</div>
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">Main</div>
+    <div class="nav-item active" onclick="fShowPage('dashboard')"><span class="nav-icon">🏠</span>Dashboard</div>
+    <div class="nav-item"        onclick="fShowPage('pending')">
+      <span class="nav-icon">⏳</span>Pending Requests
+      <span class="nav-badge yellow" id="f-pending-badge">2</span>
+    </div>
+    <div class="nav-item"        onclick="fShowPage('all-requests')"><span class="nav-icon">📋</span>All Requests</div>
+    <div class="nav-section">Insights</div>
+    <div class="nav-item"        onclick="fShowPage('students')"><span class="nav-icon">👥</span>My Students</div>
+    <div class="nav-item"        onclick="fShowPage('reports')"><span class="nav-icon">📊</span>Reports</div>
+    <div class="nav-section">Account</div>
+    <div class="nav-item"        onclick="fShowPage('profile')"><span class="nav-icon">👤</span>Profile</div>
+  </nav>
+  <div class="sidebar-footer">
+    <button class="btn-logout" onclick="logout()">↩ &nbsp;Sign Out</button>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+
+  <!-- DASHBOARD -->
+  <div class="page active" id="f-page-dashboard">
+    <div class="topbar">
+      <div class="topbar-left">
+        <h1 id="f-welcome">Good morning, Dr. Nair 👋</h1>
+        <p>Faculty leave management overview</p>
+      </div>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card c-yellow">
+        <div class="stat-icon">⏳</div>
+        <div class="stat-value" id="f-stat-pending">2</div>
+        <div class="stat-label">Pending Approval</div>
+        <div class="stat-sub">need your attention</div>
+      </div>
+      <div class="stat-card c-teal">
+        <div class="stat-icon">✅</div>
+        <div class="stat-value" id="f-stat-approved">0</div>
+        <div class="stat-label">Approved This Session</div>
+        <div class="stat-sub">since you logged in</div>
+      </div>
+      <div class="stat-card c-blue">
+        <div class="stat-icon">👥</div>
+        <div class="stat-value">8</div>
+        <div class="stat-label">Total Students</div>
+        <div class="stat-sub">under your mentorship</div>
+      </div>
+      <div class="stat-card c-red">
+        <div class="stat-icon">⚠️</div>
+        <div class="stat-value">2</div>
+        <div class="stat-label">High Absentees</div>
+        <div class="stat-sub">above 5 days absent</div>
+      </div>
+    </div>
+    <div class="grid-2-1">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><div class="icon">⏳</div>Pending Requests</div>
+          <button class="btn btn-ghost btn-sm" onclick="fShowPage('pending')">View All →</button>
+        </div>
+        <div class="table-wrap">
+          <table><thead><tr><th>Student</th><th>Type</th><th>Dates</th><th>Days</th><th>Action</th></tr></thead>
+          <tbody id="f-dash-pending"></tbody></table>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="margin-bottom:1rem"><div class="icon">📈</div>Quick Stats</div>
+        <div id="f-quick-stats"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PENDING REQUESTS -->
+  <div class="page" id="f-page-pending">
+    <div class="topbar"><div class="topbar-left"><h1>Pending Requests</h1><p>Review and act on leave applications awaiting approval</p></div></div>
+    <div class="card">
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Student</th><th>Type</th><th>From</th><th>To</th><th>Days</th><th>Reason</th><th>Applied</th><th>Actions</th></tr></thead>
+          <tbody id="f-pending-table"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ALL REQUESTS -->
+  <div class="page" id="f-page-all-requests">
+    <div class="topbar"><div class="topbar-left"><h1>All Leave Requests</h1><p>Complete record of all student leave applications</p></div></div>
+    <div class="card">
+      <div style="display:flex;gap:.75rem;margin-bottom:1.25rem;flex-wrap:wrap;">
+        <select class="form-control" style="width:auto;padding:.45rem .85rem;font-size:.82rem;" id="f-ar-status" onchange="fRenderAllRequests()">
+          <option value="all">All Status</option>
+          <option value="Pending">Pending</option>
+          <option value="Approved">Approved</option>
+          <option value="Rejected">Rejected</option>
+        </select>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Student</th><th>Type</th><th>From</th><th>To</th><th>Days</th><th>Reason</th><th>Status</th><th>Remarks</th></tr></thead>
+          <tbody id="f-all-table"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- MY STUDENTS -->
+  <div class="page" id="f-page-students">
+    <div class="topbar"><div class="topbar-left"><h1>My Students</h1><p>Mentorship list with leave and attendance summary</p></div></div>
+    <div class="card">
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Name</th><th>Roll No</th><th>Year</th><th>Leaves Used</th><th>Remaining</th><th>Attendance</th><th>Status</th></tr></thead>
+          <tbody id="f-students-table"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- REPORTS -->
+  <div class="page" id="f-page-reports">
+    <div class="topbar"><div class="topbar-left"><h1>Reports &amp; Analytics</h1><p>Leave patterns and department overview</p></div></div>
+    <div class="stats-grid">
+      <div class="stat-card c-teal"><div class="stat-icon">📊</div><div class="stat-value" id="f-rpt-total">—</div><div class="stat-label">Total Applications</div><div class="stat-sub">this semester</div></div>
+      <div class="stat-card c-teal"><div class="stat-icon">✅</div><div class="stat-value" id="f-rpt-rate">—</div><div class="stat-label">Approval Rate</div><div class="stat-sub">approved vs total</div></div>
+      <div class="stat-card c-yellow"><div class="stat-icon">📅</div><div class="stat-value" id="f-rpt-avg">—</div><div class="stat-label">Avg Days / Leave</div><div class="stat-sub">average duration</div></div>
+      <div class="stat-card"><div class="stat-icon">🏆</div><div class="stat-value" style="font-size:1rem;text-transform:capitalize;" id="f-rpt-common">—</div><div class="stat-label">Most Common</div><div class="stat-sub">leave type</div></div>
+    </div>
+    <div class="grid-1-1">
+      <div class="card">
+        <div class="card-title" style="margin-bottom:1.25rem"><div class="icon">📊</div>Leave Type Breakdown</div>
+        <div id="f-type-breakdown"></div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="margin-bottom:1.25rem"><div class="icon">📅</div>Month-wise Summary</div>
+        <div id="f-month-breakdown"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROFILE -->
+  <div class="page" id="f-page-profile">
+    <div class="topbar"><div class="topbar-left"><h1>My Profile</h1><p>Your faculty information</p></div></div>
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:1.25rem;margin-bottom:1.5rem;padding-bottom:1.5rem;border-bottom:1px solid var(--border);">
+        <div class="avatar-lg avatar-faculty" id="f-fp-avatar">PN</div>
+        <div>
+          <p style="font-size:1.2rem;font-weight:600;color:var(--text-1);" id="f-fp-name">Dr. Priya Nair</p>
+          <p style="color:var(--text-3);font-size:.875rem;margin-top:.2rem;" id="f-fp-sub">Associate Professor · Computer Science</p>
+        </div>
+      </div>
+      <div class="profile-grid">
+        <div class="profile-field"><label>Employee ID</label><p id="f-fp-id">FAC2015</p></div>
+        <div class="profile-field"><label>Department</label><p id="f-fp-dept">Computer Science</p></div>
+        <div class="profile-field"><label>Designation</label><p id="f-fp-desig">Associate Professor</p></div>
+        <div class="profile-field"><label>Mentoring</label><p>8 students</p></div>
+        <div class="profile-field"><label>Email</label><p>faculty@demo.com</p></div>
+        <div class="profile-field"><label>Joined</label><p>2015</p></div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- REVIEW MODAL -->
+<div class="modal-overlay" id="f-action-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Review Leave Request</h3>
+      <button class="modal-close" onclick="fCloseModal()">✕</button>
+    </div>
+    <div id="f-modal-content"></div>
+    <div class="form-group" style="margin-top:1rem;">
+      <label class="form-label">Remarks for Student (optional)</label>
+      <textarea class="form-control" id="f-modal-remarks" placeholder="Add a note for the student…"></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-success" onclick="fConfirmAction('Approved')">✓ Approve</button>
+      <button class="btn btn-danger"  onclick="fConfirmAction('Rejected')">✗ Reject</button>
+      <button class="btn btn-secondary" onclick="fCloseModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script src="../assets/scripts/storage.js"></script>
+<script src="../assets/scripts/faculty.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const user = Storage.getUser();
+    if (!user || user.role !== 'faculty') { window.location.href = '../../index.html'; return; }
+    Storage.seed();
+    initFaculty();
+  });
+  function showToast(title, msg, type='success') {
+    const icons = {success:'✅',error:'❌',warning:'⚠️',info:'ℹ️'};
+    const t = document.createElement('div');
+    t.className = `toast t-${type}`;
+    t.innerHTML = `<span class="toast-icon">${icons[type]}</span><div class="toast-content"><div class="toast-title">${title}</div><div class="toast-msg">${msg}</div></div>`;
+    document.getElementById('toast-container').appendChild(t);
+    requestAnimationFrame(() => requestAnimationFrame(() => t.classList.add('show')));
+    setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 500); }, 3800);
+  }
+  function logout() { Storage.clearUser(); window.location.href = '../../index.html'; }
+</script>
+</body>
+</html>

@@ -4,8 +4,8 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>LeaveFlow — Login</title>
-  <link rel="stylesheet" href="css/main.css"/>
-  <link rel="stylesheet" href="css/components.css"/>
+  <link rel="stylesheet" href="frontend/assets/styles/main.css"/>
+  <link rel="stylesheet" href="frontend/assets/styles/components.css"/>
   <style>
     body{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:1.5rem;}
     .login-wrap{width:100%;max-width:440px;position:relative;z-index:1;animation:fadeUp .65s cubic-bezier(.16,1,.3,1) both;}
@@ -83,7 +83,7 @@
   </div>
 </div>
 
-<script src="js/storage.js"></script>
+<script src="frontend/assets/scripts/storage.js"></script>
 <script>
 let currentRole = 'student';
 
@@ -122,10 +122,10 @@ function login() {
   setTimeout(() => {
     if (currentRole === 'student' && email === 'student@demo.com' && pass === '1234') {
       Storage.setUser({role:'student', name:'Arjun Sharma', id:'CS2021045', dept:'Computer Science', year:'3rd Year', faculty:'Dr. Priya Nair'});
-      window.location.href = 'student-dashboard.html';
+      window.location.href = 'frontend/pages/student-dashboard.html';
     } else if (currentRole === 'faculty' && email === 'faculty@demo.com' && pass === '1234') {
       Storage.setUser({role:'faculty', name:'Dr. Priya Nair', id:'FAC2015', dept:'Computer Science', designation:'Associate Professor'});
-      window.location.href = 'faculty-dashboard.html';
+      window.location.href = 'frontend/pages/faculty-dashboard.html';
     } else {
       btn.disabled = false;
       btn.innerHTML = 'Sign In &nbsp;→';
