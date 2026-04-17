@@ -26,8 +26,8 @@ export default function StudentDashboard() {
   const [filterType, setFilterType]     = useState('all')
 
   const load = useCallback(async () => {
-    const [l, n] = await Promise.all([api.getLeaves(), api.getNotifs()])
-    setLeaves(l); setNotifs(n)
+    const l = await api.myLeaves()
+    setLeaves(l)
   }, [])
 
   useEffect(() => { load() }, [load])

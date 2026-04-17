@@ -54,11 +54,9 @@ def create_app():
     app.register_blueprint(admin_bp,  url_prefix='/api/admin')
 
     with app.app_context():
-        db_path = os.path.join(app.instance_path, 'absentalert.db')
         db.create_all()
-        if not os.path.exists(db_path) or os.path.getsize(db_path) < 1000:
-            from seed import seed_db
-            seed_db()
+        from seed import seed_db
+        seed_db()
 
     return app
 
