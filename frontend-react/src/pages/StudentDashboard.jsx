@@ -5,7 +5,7 @@ import Sidebar from '../components/Sidebar'
 import Toast from '../components/Toast'
 import { useToast } from '../hooks/useToast'
 
-const QUOTA = 3
+const QUOTA = 6
 const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December']
 
 export default function StudentDashboard() {
