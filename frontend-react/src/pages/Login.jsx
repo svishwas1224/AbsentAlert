@@ -1,4 +1,4 @@
-﻿import { useState } from 'react'
+﻿import { useState, useEffect } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { api } from '../api'
 
@@ -63,9 +63,19 @@ export default function Login() {
   const [error, setError]     = useState('')
   const [success, setSuccess] = useState('')
   const [loading, setLoading] = useState(false)
+  const [classes, setClasses] = useState([])
+
+  // Load classes on mount (public endpoint - no auth needed)
+  useEffect(() => {
+    api.getPublicClasses().then(setClasses).catch(() => setClasses([]))
+  }, [])
 
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }))
   const activeColor = ROLES.find(r => r.key === role)?.color || 'var(--teal)'
+
+  // Filter classes by selected department
+  const filteredClasses = classes.filter(c => c.department === form.department)
+  const selectedClass = classes.find(c => c.class_name === form.class_name)
 
   const handleSubmit = async () => {
     setError(''); setSuccess(''); setLoading(true)
@@ -216,7 +226,7 @@ export default function Login() {
               <div className="form-grid">
                 <div className="form-group">
                   <label className="form-label">Department <span style={{color:'var(--rejected)'}}>*</span></label>
-                  <select className="form-control" value={form.department || ''} onChange={e => set('department', e.target.value)}>
+                  <select className="form-control" value={form.department || ''} onChange={e => { set('department', e.target.value); set('class_name', '') }}>
                     <option value="">Select department</option>
                     <option value="Computer Science">Computer Science (BCA)</option>
                     <option value="Business Administration">Business Administration (BBA)</option>
@@ -227,9 +237,14 @@ export default function Login() {
                   <label className="form-label">Class <span style={{color:'var(--text-3)',fontWeight:400}}>(optional)</span></label>
                   <select className="form-control" value={form.class_name || ''} onChange={e => set('class_name', e.target.value)}>
                     <option value="">Select class</option>
-                    <optgroup label="BCA"><option value="BCA-1">BCA-1</option><option value="BCA-2">BCA-2</option><option value="BCA-3">BCA-3</option></optgroup>
-                    <optgroup label="BBA"><option value="BBA-1">BBA-1</option><option value="BBA-2">BBA-2</option><option value="BBA-3">BBA-3</option></optgroup>
-                    <optgroup label="BCom"><option value="BCom-1">BCom-1</option><option value="BCom-2">BCom-2</option><option value="BCom-3">BCom-3</option></optgroup>
+                    {filteredClasses.map(c => (
+                      <option key={c.id} value={c.class_name}>
+                        {c.class_name} — Mentor: {c.mentor_name}
+                      </option>
+                    ))}
+                    {!filteredClasses.length && form.department && (
+                      <option disabled>No classes for this department yet</option>
+                    )}
                   </select>
                 </div>
               </div>
@@ -237,6 +252,11 @@ export default function Login() {
                 <label className="form-label">Password <span style={{color:'var(--rejected)'}}>*</span></label>
                 <PasswordInput value={form.password || ''} onChange={e => set('password', e.target.value)} placeholder="Create a password" />
               </div>
+              {selectedClass && selectedClass.mentor_name !== 'Not assigned' && (
+                <div style={{ fontSize:'.82rem', color:'#065f46', padding:'.65rem .875rem', background:'#d1fae5', border:'1px solid #10b981', borderRadius:8, marginBottom:'.5rem', lineHeight:1.5 }}>
+                  Your class mentor is <strong>{selectedClass.mentor_name}</strong>. Leave requests will be sent to them.
+                </div>
+              )}
             </>
           )}
 

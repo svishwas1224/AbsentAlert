@@ -23,7 +23,29 @@ def create_class():
 
 @admin_bp.route('/classes', methods=['GET'])
 def get_classes():
-    return jsonify([c.to_dict() for c in Class.query.all()]), 200
+    classes = Class.query.all()
+    result = []
+    for c in classes:
+        mentor = LecturerAssignment.query.filter_by(class_id=c.id, is_mentor=True).first()
+        d = c.to_dict()
+        d['mentor_name'] = mentor.lecturer.lecturer_name if mentor and mentor.lecturer else 'Not assigned'
+        result.append(d)
+    return jsonify(result), 200
+
+# ── Public: classes with mentor (no auth needed for registration) ──
+@admin_bp.route('/public/classes', methods=['GET'])
+def public_classes():
+    classes = Class.query.all()
+    result = []
+    for c in classes:
+        mentor = LecturerAssignment.query.filter_by(class_id=c.id, is_mentor=True).first()
+        result.append({
+            'id': c.id,
+            'class_name': c.class_name,
+            'department': c.department,
+            'mentor_name': mentor.lecturer.lecturer_name if mentor and mentor.lecturer else 'Not assigned',
+        })
+    return jsonify(result), 200
 
 @admin_bp.route('/delete-class/<int:cid>', methods=['DELETE'])
 def delete_class(cid):

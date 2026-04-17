@@ -36,6 +36,7 @@ export const api = {
   // Admin
   createClass:       (d)   => req('POST',   '/admin/create-class', d),
   getClasses:        ()    => req('GET',    '/admin/classes'),
+  getPublicClasses:  ()    => req('GET',    '/admin/public/classes'),
   deleteClass:       (id)  => req('DELETE', `/admin/delete-class/${id}`),
   assignLecturer:    (d)   => req('POST',   '/admin/assign-lecturer', d),
   getAssignments:    ()    => req('GET',    '/admin/assignments'),
