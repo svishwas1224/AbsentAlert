@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify, session
-from models import Class, Subject, LecturerAssignment, Student, Lecturer, Leave
+from models import Class, LecturerAssignment, Student, Lecturer, Leave
 from extensions import db
 
 admin_bp = Blueprint('admin', __name__)
@@ -34,31 +34,6 @@ def delete_class(cid):
     db.session.delete(c); db.session.commit()
     return jsonify({'message': 'Deleted'}), 200
 
-# ── Subjects ──────────────────────────────────────────────────
-@admin_bp.route('/create-subject', methods=['POST'])
-def create_subject():
-    err = require_management()
-    if err: return err
-    d = request.get_json()
-    if not d.get('subject_name'):
-        return jsonify({'error': 'subject_name required'}), 400
-    s = Subject(subject_name=d['subject_name'], subject_code=d.get('subject_code',''),
-                department=d.get('department',''))
-    db.session.add(s); db.session.commit()
-    return jsonify(s.to_dict()), 201
-
-@admin_bp.route('/subjects', methods=['GET'])
-def get_subjects():
-    return jsonify([s.to_dict() for s in Subject.query.all()]), 200
-
-@admin_bp.route('/delete-subject/<int:sid>', methods=['DELETE'])
-def delete_subject(sid):
-    err = require_management()
-    if err: return err
-    s = Subject.query.get_or_404(sid)
-    db.session.delete(s); db.session.commit()
-    return jsonify({'message': 'Deleted'}), 200
-
 # ── Lecturer Assignments ──────────────────────────────────────
 @admin_bp.route('/assign-lecturer', methods=['POST'])
 def assign_lecturer():
@@ -77,7 +52,6 @@ def assign_lecturer():
     a = LecturerAssignment(
         lecturer_id=d['lecturer_id'],
         class_id=d['class_id'],
-        subject_id=d.get('subject_id') or None,
         is_mentor=bool(d.get('is_mentor', False)),
         department=d.get('department', ''),
         assigned_by_admin=session.get('user_id')

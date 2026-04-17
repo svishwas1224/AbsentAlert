@@ -1,4 +1,4 @@
-from models import Student, Lecturer, Management, Class, Subject, LecturerAssignment, Leave
+from models import Student, Lecturer, Management, Class, LecturerAssignment, Leave
 from extensions import db
 from werkzeug.security import generate_password_hash
 
@@ -9,7 +9,6 @@ def seed_db():
     db.session.execute(text('DELETE FROM lecturer_assignments'))
     db.session.execute(text('DELETE FROM students'))
     db.session.execute(text('DELETE FROM lecturers'))
-    db.session.execute(text('DELETE FROM subjects'))
     db.session.execute(text('DELETE FROM classes'))
     db.session.execute(text('DELETE FROM management'))
     db.session.commit()
@@ -34,29 +33,6 @@ def seed_db():
         Class(class_name='BCom-3A', department='Commerce', semester='5', section='A'),
     ]
     db.session.add_all(classes)
-
-    # ── Subjects ──────────────────────────────────────────────
-    subjects = [
-        # BCA subjects
-        Subject(subject_name='Programming in C',        subject_code='BCA101', department='Computer Science'),
-        Subject(subject_name='Data Structures',         subject_code='BCA201', department='Computer Science'),
-        Subject(subject_name='Database Management',     subject_code='BCA301', department='Computer Science'),
-        Subject(subject_name='Web Technologies',        subject_code='BCA302', department='Computer Science'),
-        # BBA subjects
-        Subject(subject_name='Principles of Management', subject_code='BBA101', department='Business Administration'),
-        Subject(subject_name='Business Communication',   subject_code='BBA102', department='Business Administration'),
-        Subject(subject_name='Marketing Management',     subject_code='BBA201', department='Business Administration'),
-        Subject(subject_name='Human Resource Management',subject_code='BBA301', department='Business Administration'),
-        # BCom subjects
-        Subject(subject_name='Financial Accounting',    subject_code='BCom101', department='Commerce'),
-        Subject(subject_name='Business Economics',      subject_code='BCom102', department='Commerce'),
-        Subject(subject_name='Cost Accounting',         subject_code='BCom201', department='Commerce'),
-        Subject(subject_name='Income Tax',              subject_code='BCom301', department='Commerce'),
-        # Common
-        Subject(subject_name='Business Mathematics',    subject_code='COM101', department='Common'),
-        Subject(subject_name='English Communication',   subject_code='COM102', department='Common'),
-    ]
-    db.session.add_all(subjects)
 
     # ── Lecturers ─────────────────────────────────────────────
     lecturers = [
@@ -91,21 +67,21 @@ def seed_db():
     # ── Lecturer Assignments (one mentor per class) ──────────
     assignments = [
         # BCA-3A — Dr. Priya Nair is mentor
-        LecturerAssignment(lecturer_id=lecturers[0].id, class_id=classes[2].id, subject_id=subjects[2].id, is_mentor=True,  department='Computer Science',       assigned_by_admin=admin.id),
-        LecturerAssignment(lecturer_id=lecturers[1].id, class_id=classes[2].id, subject_id=subjects[3].id, is_mentor=False, department='Computer Science',       assigned_by_admin=admin.id),
+        LecturerAssignment(lecturer_id=lecturers[0].id, class_id=classes[2].id, is_mentor=True,  department='Computer Science',        assigned_by_admin=admin.id),
+        LecturerAssignment(lecturer_id=lecturers[1].id, class_id=classes[2].id, is_mentor=False, department='Computer Science',        assigned_by_admin=admin.id),
         # BCA-2A — Dr. Priya Nair is mentor
-        LecturerAssignment(lecturer_id=lecturers[0].id, class_id=classes[1].id, subject_id=subjects[1].id, is_mentor=True,  department='Computer Science',       assigned_by_admin=admin.id),
-        LecturerAssignment(lecturer_id=lecturers[1].id, class_id=classes[1].id, subject_id=subjects[0].id, is_mentor=False, department='Computer Science',       assigned_by_admin=admin.id),
+        LecturerAssignment(lecturer_id=lecturers[0].id, class_id=classes[1].id, is_mentor=True,  department='Computer Science',        assigned_by_admin=admin.id),
+        LecturerAssignment(lecturer_id=lecturers[1].id, class_id=classes[1].id, is_mentor=False, department='Computer Science',        assigned_by_admin=admin.id),
         # BBA-3A — Dr. Sunita Rao is mentor
-        LecturerAssignment(lecturer_id=lecturers[2].id, class_id=classes[5].id, subject_id=subjects[6].id, is_mentor=True,  department='Business Administration', assigned_by_admin=admin.id),
-        LecturerAssignment(lecturer_id=lecturers[3].id, class_id=classes[5].id, subject_id=subjects[7].id, is_mentor=False, department='Business Administration', assigned_by_admin=admin.id),
+        LecturerAssignment(lecturer_id=lecturers[2].id, class_id=classes[5].id, is_mentor=True,  department='Business Administration', assigned_by_admin=admin.id),
+        LecturerAssignment(lecturer_id=lecturers[3].id, class_id=classes[5].id, is_mentor=False, department='Business Administration', assigned_by_admin=admin.id),
         # BBA-2A — Dr. Sunita Rao is mentor
-        LecturerAssignment(lecturer_id=lecturers[2].id, class_id=classes[4].id, subject_id=subjects[4].id, is_mentor=True,  department='Business Administration', assigned_by_admin=admin.id),
+        LecturerAssignment(lecturer_id=lecturers[2].id, class_id=classes[4].id, is_mentor=True,  department='Business Administration', assigned_by_admin=admin.id),
         # BCom-3A — Dr. Kavitha Reddy is mentor
-        LecturerAssignment(lecturer_id=lecturers[4].id, class_id=classes[8].id, subject_id=subjects[10].id, is_mentor=True,  department='Commerce',              assigned_by_admin=admin.id),
-        LecturerAssignment(lecturer_id=lecturers[5].id, class_id=classes[8].id, subject_id=subjects[11].id, is_mentor=False, department='Commerce',              assigned_by_admin=admin.id),
+        LecturerAssignment(lecturer_id=lecturers[4].id, class_id=classes[8].id, is_mentor=True,  department='Commerce',               assigned_by_admin=admin.id),
+        LecturerAssignment(lecturer_id=lecturers[5].id, class_id=classes[8].id, is_mentor=False, department='Commerce',               assigned_by_admin=admin.id),
         # BCom-2A — Dr. Kavitha Reddy is mentor
-        LecturerAssignment(lecturer_id=lecturers[4].id, class_id=classes[7].id, subject_id=subjects[8].id,  is_mentor=True,  department='Commerce',              assigned_by_admin=admin.id),
+        LecturerAssignment(lecturer_id=lecturers[4].id, class_id=classes[7].id, is_mentor=True,  department='Commerce',               assigned_by_admin=admin.id),
     ]
     db.session.add_all(assignments)
 

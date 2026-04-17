@@ -19,7 +19,7 @@ export default function ManagementDashboard() {
   const [page, setPage]           = useState('dashboard')
   const [stats, setStats]         = useState({})
   const [classes, setClasses]     = useState([])
-  const [subjects, setSubjects]   = useState([])
+  const [lecturers, setLecturers] = useState([])
   const [lecturers, setLecturers] = useState([])
   const [students, setStudents]   = useState([])
   const [assignments, setAssignments] = useState([])
@@ -32,18 +32,17 @@ export default function ManagementDashboard() {
 
   // Forms
   const [newClass,   setNewClass]   = useState({ class_name:'', department:'', semester:'', section:'' })
-  const [newSubject, setNewSubject] = useState({ subject_name:'', subject_code:'', department:'' })
   const [newAssign,  setNewAssign]  = useState({ lecturer_id:'', class_id:'', is_mentor:false })
   const [newLecturer, setNewLecturer] = useState({ lecturer_name:'', email:'', password:'', department:'', lecturer_id:'' })
 
   const load = useCallback(async () => {
-    const [s, c, sub, l, st, a, ll, al, sr] = await Promise.all([
-      api.getDashboard(), api.getClasses(), api.getSubjects(),
+    const [s, c, l, st, a, ll, al, sr] = await Promise.all([
+      api.getDashboard(), api.getClasses(),
       api.getLecturers(), api.getStudents(), api.getAssignments(),
       api.lecturerRequests(), api.allLeaves(),
       api.getStudentReport(),
     ])
-    setStats(s); setClasses(c); setSubjects(sub); setLecturers(l)
+    setStats(s); setClasses(c); setLecturers(l)
     setStudents(st); setAssignments(a); setLecLeaves(ll)
     setAllLeaves(al); setStudentReport(sr)
   }, [])
@@ -241,70 +240,38 @@ export default function ManagementDashboard() {
           </div>
         )}
 
-        {/* ── CLASSES & SUBJECTS ── */}
+        {/* ── CLASSES ── */}
         {page === 'classes' && (
           <div className="fade-in">
-            <div className="topbar"><div className="topbar-left"><h1>Classes &amp; Subjects</h1><p>Manage class list and subject list</p></div></div>
+            <div className="topbar"><div className="topbar-left"><h1>Classes</h1><p>Manage class list</p></div></div>
             <div className="grid-1-1">
-              <div>
-                <div className="card" style={{marginBottom:'1rem'}}>
-                  <div className="card-title" style={{marginBottom:'1.25rem'}}><div className="card-icon">—</div>Add Class</div>
-                  <div className="form-grid">
-                    <div className="form-group"><label className="form-label">Class Name *</label><input className="form-control" value={newClass.class_name} onChange={e=>setNewClass(c=>({...c,class_name:e.target.value}))} placeholder="e.g. BCA-3A" /></div>
-                    <div className="form-group">
-                      <label className="form-label">Department</label>
-                      <select className="form-control" value={newClass.department} onChange={e=>setNewClass(c=>({...c,department:e.target.value}))}>
-                        <option value="">Select department</option>
-                        <option value="Computer Science">Computer Science (BCA)</option>
-                        <option value="Business Administration">Business Administration (BBA)</option>
-                        <option value="Commerce">Commerce (BCom)</option>
-                      </select>
-                    </div>
-                    <div className="form-group"><label className="form-label">Semester</label><input className="form-control" value={newClass.semester} onChange={e=>setNewClass(c=>({...c,semester:e.target.value}))} placeholder="1-6" /></div>
-                    <div className="form-group"><label className="form-label">Section</label><input className="form-control" value={newClass.section} onChange={e=>setNewClass(c=>({...c,section:e.target.value}))} placeholder="A" /></div>
+              <div className="card" style={{marginBottom:'1rem'}}>
+                <div className="card-title" style={{marginBottom:'1.25rem'}}>Add Class</div>
+                <div className="form-grid">
+                  <div className="form-group"><label className="form-label">Class Name *</label><input className="form-control" value={newClass.class_name} onChange={e=>setNewClass(c=>({...c,class_name:e.target.value}))} placeholder="e.g. BCA-3A" /></div>
+                  <div className="form-group">
+                    <label className="form-label">Department</label>
+                    <select className="form-control" value={newClass.department} onChange={e=>setNewClass(c=>({...c,department:e.target.value}))}>
+                      <option value="">Select department</option>
+                      <option value="Computer Science">Computer Science (BCA)</option>
+                      <option value="Business Administration">Business Administration (BBA)</option>
+                      <option value="Commerce">Commerce (BCom)</option>
+                    </select>
                   </div>
-                  <button className="btn btn-primary btn-sm" onClick={addClass}>Add Class</button>
+                  <div className="form-group"><label className="form-label">Semester</label><input className="form-control" value={newClass.semester} onChange={e=>setNewClass(c=>({...c,semester:e.target.value}))} placeholder="1-6" /></div>
+                  <div className="form-group"><label className="form-label">Section</label><input className="form-control" value={newClass.section} onChange={e=>setNewClass(c=>({...c,section:e.target.value}))} placeholder="A" /></div>
                 </div>
-                <div className="card">
-                  <div className="card-title" style={{marginBottom:'1rem'}}><div className="card-icon">—</div>Classes ({classes.length})</div>
-                  {classes.map(c => (
-                    <div key={c.id} className="qs-row">
-                      <div><span style={{color:'var(--text-1)',fontWeight:500}}>{c.class_name}</span> <span className="td-muted"> · {c.department} · Sem {c.semester}</span></div>
-                      <button className="btn btn-sm btn-danger" onClick={async()=>{await api.deleteClass(c.id);await load()}}>✕</button>
-                    </div>
-                  ))}
-                  {!classes.length && <div className="empty-state"><p>No classes yet</p></div>}
-                </div>
+                <button className="btn btn-primary btn-sm" onClick={addClass}>Add Class</button>
               </div>
-              <div>
-                <div className="card" style={{marginBottom:'1rem'}}>
-                  <div className="card-title" style={{marginBottom:'1.25rem'}}><div className="card-icon">—</div>Add Subject</div>
-                  <div className="form-group"><label className="form-label">Subject Name *</label><input className="form-control" value={newSubject.subject_name} onChange={e=>setNewSubject(s=>({...s,subject_name:e.target.value}))} placeholder="e.g. Data Structures" /></div>
-                  <div className="form-grid">
-                    <div className="form-group"><label className="form-label">Subject Code</label><input className="form-control" value={newSubject.subject_code} onChange={e=>setNewSubject(s=>({...s,subject_code:e.target.value}))} placeholder="e.g. BCA301" /></div>
-                    <div className="form-group">
-                      <label className="form-label">Department</label>
-                      <select className="form-control" value={newSubject.department} onChange={e=>setNewSubject(s=>({...s,department:e.target.value}))}>
-                        <option value="">Select department</option>
-                        <option value="Computer Science">Computer Science (BCA)</option>
-                        <option value="Business Administration">Business Administration (BBA)</option>
-                        <option value="Commerce">Commerce (BCom)</option>
-                        <option value="Common">Common (All Departments)</option>
-                      </select>
-                    </div>
+              <div className="card">
+                <div className="card-title" style={{marginBottom:'1rem'}}>Classes ({classes.length})</div>
+                {classes.map(c => (
+                  <div key={c.id} className="qs-row">
+                    <div><span style={{color:'var(--text-1)',fontWeight:500}}>{c.class_name}</span> <span className="td-muted"> · {c.department} · Sem {c.semester}</span></div>
+                    <button className="btn btn-sm btn-danger" onClick={async()=>{await api.deleteClass(c.id);await load()}}>Remove</button>
                   </div>
-                  <button className="btn btn-primary btn-sm" onClick={addSubject}>Add Subject</button>
-                </div>
-                <div className="card">
-                  <div className="card-title" style={{marginBottom:'1rem'}}><div className="card-icon">—</div>Subjects ({subjects.length})</div>
-                  {subjects.map(s => (
-                    <div key={s.id} className="qs-row">
-                      <div><span style={{color:'var(--text-1)',fontWeight:500}}>{s.subject_name}</span> <span className="td-muted"> · {s.subject_code}</span></div>
-                      <button className="btn btn-sm btn-danger" onClick={async()=>{await api.deleteSubject(s.id);await load()}}>✕</button>
-                    </div>
-                  ))}
-                  {!subjects.length && <div className="empty-state"><p>No subjects yet</p></div>}
-                </div>
+                ))}
+                {!classes.length && <div className="empty-state"><p>No classes yet</p></div>}
               </div>
             </div>
           </div>
@@ -484,6 +451,7 @@ export default function ManagementDashboard() {
     </div>
   )
 }
+
 
 
 

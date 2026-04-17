@@ -62,33 +62,18 @@ class Class(db.Model):
                     semester=self.semester, section=self.section)
 
 
-class Subject(db.Model):
-    __tablename__ = 'subjects'
-    id           = db.Column(db.Integer, primary_key=True)
-    subject_name = db.Column(db.String(100), nullable=False)
-    subject_code = db.Column(db.String(20))
-    department   = db.Column(db.String(100))
-    created_at   = db.Column(db.DateTime, default=datetime.utcnow)
-
-    def to_dict(self):
-        return dict(id=self.id, subject_name=self.subject_name,
-                    subject_code=self.subject_code, department=self.department)
-
-
 class LecturerAssignment(db.Model):
     __tablename__ = 'lecturer_assignments'
     id               = db.Column(db.Integer, primary_key=True)
     lecturer_id      = db.Column(db.Integer, db.ForeignKey('lecturers.id'), nullable=False)
     class_id         = db.Column(db.Integer, db.ForeignKey('classes.id'), nullable=False)
-    subject_id       = db.Column(db.Integer, db.ForeignKey('subjects.id'), nullable=True)
-    is_mentor        = db.Column(db.Boolean, default=False)   # class in-charge / mentor
+    is_mentor        = db.Column(db.Boolean, default=False)
     department       = db.Column(db.String(100))
     assigned_by_admin= db.Column(db.Integer, db.ForeignKey('management.id'))
     created_at       = db.Column(db.DateTime, default=datetime.utcnow)
 
     lecturer = db.relationship('Lecturer', backref='assignments')
     cls      = db.relationship('Class',    backref='assignments')
-    subject  = db.relationship('Subject',  backref='assignments')
 
     def to_dict(self):
         return dict(
@@ -97,8 +82,6 @@ class LecturerAssignment(db.Model):
             lecturer_name=self.lecturer.lecturer_name if self.lecturer else '',
             class_id=self.class_id,
             class_name=self.cls.class_name if self.cls else '',
-            subject_id=self.subject_id,
-            subject_name=self.subject.subject_name if self.subject else '—',
             is_mentor=self.is_mentor,
             department=self.department,
         )
