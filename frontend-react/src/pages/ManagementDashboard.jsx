@@ -184,9 +184,30 @@ export default function ManagementDashboard() {
         {/* ── ASSIGNMENTS ── */}
         {page === 'assignments' && (
           <div className="fade-in">
-            <div className="topbar"><div className="topbar-left"><h1>Lecturer Assignments</h1><p>Assign lecturers to classes and subjects</p></div></div>
+            <div className="topbar"><div className="topbar-left"><h1>Lecturer Assignments</h1><p>Each class has one mentor — students leave requests go to their class mentor</p></div></div>
+
+            {/* Class-Mentor overview */}
             <div className="card" style={{marginBottom:'1.5rem'}}>
-              <div className="card-title" style={{marginBottom:'1.25rem'}}><div className="card-icon">—</div>New Assignment</div>
+              <div className="card-title" style={{marginBottom:'1.25rem'}}>Class — Mentor Overview</div>
+              <div style={{display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:'1rem'}}>
+                {classes.map(c => {
+                  const mentor = assignments.find(a => a.class_id === c.id && a.is_mentor)
+                  return (
+                    <div key={c.id} style={{padding:'1rem', background:'var(--bg-2)', borderRadius:12, border:'1px solid var(--border)'}}>
+                      <div style={{fontWeight:700, color:'var(--text-1)', fontSize:'.95rem'}}>{c.class_name}</div>
+                      <div style={{fontSize:'.72rem', color:'var(--text-3)', marginBottom:'.5rem'}}>{c.department}</div>
+                      {mentor
+                        ? <span className="badge badge-approved">{mentor.lecturer_name}</span>
+                        : <span className="badge badge-rejected">No Mentor</span>}
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+
+            {/* Assign new mentor */}
+            <div className="card" style={{marginBottom:'1.5rem'}}>
+              <div className="card-title" style={{marginBottom:'1.25rem'}}>Assign / Change Mentor</div>
               <div className="form-grid" style={{gridTemplateColumns:'1fr 1fr'}}>
                 <div className="form-group">
                   <label className="form-label">Lecturer</label>
@@ -206,14 +227,16 @@ export default function ManagementDashboard() {
               <div style={{padding:'.65rem .875rem',background:'#dbeafe',border:'1px solid #3b82f6',borderRadius:8,marginBottom:'1rem',fontSize:'.78rem',color:'#1e40af',lineHeight:1.5}}>
                 <label style={{display:'flex',alignItems:'center',gap:8,cursor:'pointer',margin:0}}>
                   <input type="checkbox" checked={newAssign.is_mentor} onChange={e=>setNewAssign(a=>({...a,is_mentor:e.target.checked}))} />
-                  <span style={{fontWeight:600}}>Set as Class Mentor / In-charge</span>
+                  <span style={{fontWeight:600}}>Set as Class Mentor</span>
                 </label>
-                <p style={{marginTop:'.35rem',fontSize:'.75rem',color:'#475569'}}>Student leave requests will go to the class mentor. Only one mentor per class.</p>
+                <p style={{marginTop:'.35rem',fontSize:'.75rem',color:'#475569'}}>Only one mentor per class. Setting a new mentor removes the previous one.</p>
               </div>
-              <button className="btn btn-primary" onClick={addAssignment}>Assign Lecturer</button>
+              <button className="btn btn-primary" onClick={addAssignment}>Assign</button>
             </div>
+
+            {/* Full assignments table */}
             <div className="card">
-              <div className="card-title" style={{marginBottom:'1.25rem'}}><div className="card-icon">—</div>Current Assignments</div>
+              <div className="card-title" style={{marginBottom:'1.25rem'}}>All Assignments</div>
               <div className="table-wrap">
                 <table>
                   <thead><tr><th>Lecturer</th><th>Class</th><th>Department</th><th>Role</th><th>Action</th></tr></thead>
@@ -228,10 +251,10 @@ export default function ManagementDashboard() {
                             ? <span className="badge badge-approved">Class Mentor</span>
                             : <span className="badge badge-info">Lecturer</span>}
                         </td>
-                        <td><button className="btn btn-sm btn-danger" onClick={async()=>{await api.deleteAssignment(a.id);await load();showToast('Deleted','Assignment removed.','error')}}>Delete</button></td>
+                        <td><button className="btn btn-sm btn-danger" onClick={async()=>{await api.deleteAssignment(a.id);await load();showToast('Deleted','Assignment removed.','error')}}>Remove</button></td>
                       </tr>
                     ))}
-                    {!assignments.length && <tr><td colSpan={5}><div className="empty-state"><div className="empty-icon"></div><p>No assignments yet</p></div></td></tr>}
+                    {!assignments.length && <tr><td colSpan={5}><div className="empty-state"><p>No assignments yet</p></div></td></tr>}
                   </tbody>
                 </table>
               </div>
