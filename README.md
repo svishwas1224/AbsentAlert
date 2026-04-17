@@ -87,7 +87,7 @@ AbsentAlert/
 │   │   ├── auth.py         ← POST /api/auth/login, logout, me
 │   │   ├── leaves.py       ← GET/POST /api/leaves, PATCH /api/leaves/:id
 │   │   └── notifications.py← GET /api/notifications, PATCH read-all
-│   └── data/seed.json
+│   ├── seed.py             ← Auto-seeds demo data on first run
 ├── frontend-react/
 │   ├── src/
 │   │   ├── App.jsx         ← Root component + routing

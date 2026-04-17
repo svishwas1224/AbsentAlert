@@ -10,7 +10,7 @@ All data is persisted in the browser via `localStorage` using three keys:
 - `lf_notifs` — all notifications
 
 ## Seed Data
-`data/seed.json` — contains the initial demo data structure including users, students, leaves, and notifications.
+All demo data is seeded automatically via `backend/seed.py` when Flask starts with a fresh database. No JSON file needed.
 
 ## Planned Backend Stack
 
