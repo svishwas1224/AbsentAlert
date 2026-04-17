@@ -109,6 +109,10 @@ h1,h2,h3,h4{font-family:'Sora',sans-serif;color:var(--text-1);line-height:1.2}
 .badge-info{background:var(--blue-dim);color:var(--blue);border:1px solid rgba(59,130,246,.3)}
 
 /* Form */
+input::-ms-reveal,
+input::-ms-clear {
+  display: none;
+}
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
 .form-group{display:flex;flex-direction:column;gap:.4rem;margin-bottom:.25rem}
 .form-label{font-size:.72rem;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.7px}

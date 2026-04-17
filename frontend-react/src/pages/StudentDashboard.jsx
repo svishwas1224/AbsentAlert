@@ -1,11 +1,11 @@
-﻿import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { api } from '../api'
 import Sidebar from '../components/Sidebar'
 import Toast from '../components/Toast'
 import { useToast } from '../hooks/useToast'
 
-const QUOTA = 15
+const QUOTA = 3
 const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December']
 
 export default function StudentDashboard() {
@@ -32,14 +32,15 @@ export default function StudentDashboard() {
     setMentor(m.mentor)
   }, [])
 
-  useEffect(() => { load() }, [load])
+  useEffect(() => {
+    // eslint-disable-next-line
+    load()
+  }, [load])
 
   const days = Math.max(1, Math.round((new Date(toDate) - new Date(fromDate)) / 86400000) + 1)
   const approved = leaves.filter(l => l.status === 'Approved')
   const used     = approved.reduce((s, l) => s + l.days, 0)
-  const remaining = Math.max(0, QUOTA - used)
   const unread   = notifs.filter(n => !n.read).length
-  const quotaPct = Math.round((used / QUOTA) * 100)
 
   const submitLeave = async () => {
     if (!leaveType) { showToast('Missing Field', 'Please select a leave type.', 'warning'); return }

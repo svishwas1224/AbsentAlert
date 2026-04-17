@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { api } from '../api'
 import Sidebar from '../components/Sidebar'
@@ -31,7 +31,10 @@ export default function FacultyDashboard() {
     setLeaves(l)
   }, [])
 
-  useEffect(() => { load() }, [load])
+  useEffect(() => {
+    // eslint-disable-next-line
+    load()
+  }, [load])
 
   const pending = leaves.filter(l => l.status === 'Pending')
   const h = new Date().getHours()

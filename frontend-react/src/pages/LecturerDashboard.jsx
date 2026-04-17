@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { api } from '../api'
 import Sidebar from '../components/Sidebar'
@@ -36,7 +36,10 @@ export default function LecturerDashboard() {
     setRequests(r); setMyLeaves(m)
   }, [])
 
-  useEffect(() => { load() }, [load])
+  useEffect(() => {
+    // eslint-disable-next-line
+    load()
+  }, [load])
 
   const pending = requests.filter(l => l.status === 'Pending with Lecturer')
   const days = Math.max(1, Math.round((new Date(toDate) - new Date(fromDate)) / 86400000) + 1)

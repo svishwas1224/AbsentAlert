@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { api } from '../api'
 import Sidebar from '../components/Sidebar'
 import Toast from '../components/Toast'
@@ -14,6 +14,49 @@ const STATUS_BADGE = {
   'Rejected by Management':  'badge-rejected',
 }
 
+const statusBadge = s => `badge ${STATUS_BADGE[s] || 'badge-pending'}`
+
+const LeaveTable = ({ leaves, showActions, onAction }) => (
+  <div className="table-wrap">
+    <table>
+      <thead><tr><th>Applicant</th><th>Role</th><th>Type</th><th>From</th><th>To</th><th>Days</th><th>Reason</th><th>Status</th>{showActions&&<th>Actions</th>}</tr></thead>
+      <tbody>
+        {leaves.map(l => (
+          <tr key={l.id}>
+            <td className="td-primary">{l.applicant_name}</td>
+            <td style={{textTransform:'capitalize'}}><span className={`badge ${l.applicant_role==='lecturer'?'badge-info':'badge-approved'}`}>{l.applicant_role}</span></td>
+            <td style={{textTransform:'capitalize'}}>{l.leave_type}</td>
+            <td>{l.from_date}</td><td>{l.to_date}</td><td>{l.days}d</td>
+            <td className="td-clip">{l.reason}</td>
+            <td><span className={statusBadge(l.status)}>{l.status}</span></td>
+            {showActions && (
+              <td>
+                {(l.status==='Pending with Management'||l.status==='Forwarded to Management') && (
+                  <div style={{display:'flex', gap:6}}>
+                    <button
+                      className="btn btn-sm btn-success"
+                      style={{padding:'.4rem .9rem', fontWeight:600, minWidth:80}}
+                      onClick={()=>onAction('approve', l)}>
+                      Approve
+                    </button>
+                    <button
+                      className="btn btn-sm btn-danger"
+                      style={{padding:'.4rem .9rem', fontWeight:600, minWidth:70}}
+                      onClick={()=>onAction('reject', l)}>
+                      Reject
+                    </button>
+                  </div>
+                )}
+              </td>
+            )}
+          </tr>
+        ))}
+        {!leaves.length && <tr><td colSpan={showActions?9:8}><div className="empty-state"><p>No records</p></div></td></tr>}
+      </tbody>
+    </table>
+  </div>
+)
+
 export default function ManagementDashboard() {
   const { toasts, showToast } = useToast()
   const [page, setPage]           = useState('dashboard')
@@ -23,7 +66,6 @@ export default function ManagementDashboard() {
   const [students, setStudents]   = useState([])
   const [assignments, setAssignments] = useState([])
   const [lecLeaves, setLecLeaves] = useState([])
-  const [allLeaves, setAllLeaves] = useState([])
   const [studentReport, setStudentReport] = useState([])
   const [modal, setModal]         = useState(null)
   const [modalAction, setModalAction] = useState('')
@@ -35,18 +77,21 @@ export default function ManagementDashboard() {
   const [newLecturer, setNewLecturer] = useState({ lecturer_name:'', email:'', password:'', department:'', lecturer_id:'' })
 
   const load = useCallback(async () => {
-    const [s, c, l, st, a, ll, al, sr] = await Promise.all([
+    const [s, c, l, st, a, ll, sr] = await Promise.all([
       api.getDashboard(), api.getClasses(),
       api.getLecturers(), api.getStudents(), api.getAssignments(),
-      api.lecturerRequests(), api.allLeaves(),
+      api.lecturerRequests(),
       api.getStudentReport(),
     ])
     setStats(s); setClasses(c); setLecturers(l)
     setStudents(st); setAssignments(a); setLecLeaves(ll)
-    setAllLeaves(al); setStudentReport(sr)
+    setStudentReport(sr)
   }, [])
 
-  useEffect(() => { load() }, [load])
+  useEffect(() => {
+    // eslint-disable-next-line
+    load()
+  }, [load])
 
   const h = new Date().getHours()
   const greet = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening'
@@ -68,11 +113,7 @@ export default function ManagementDashboard() {
     catch (e) { showToast('Error', e.message, 'error') }
   }
 
-  const addSubject = async () => {
-    if (!newSubject.subject_name) { showToast('Missing', 'Subject name required', 'warning'); return }
-    try { await api.createSubject(newSubject); await load(); setNewSubject({subject_name:'',subject_code:'',department:''}); showToast('Created ', 'Subject added.', 'success') }
-    catch (e) { showToast('Error', e.message, 'error') }
-  }
+
 
   const addAssignment = async () => {
     if (!newAssign.lecturer_id || !newAssign.class_id) {
@@ -94,48 +135,9 @@ export default function ManagementDashboard() {
     } catch (e) { showToast('Error', e.message, 'error') }
   }
 
-  const statusBadge = s => `badge ${STATUS_BADGE[s] || 'badge-pending'}`
 
-  const LeaveTable = ({ leaves, showActions }) => (
-    <div className="table-wrap">
-      <table>
-        <thead><tr><th>Applicant</th><th>Role</th><th>Type</th><th>From</th><th>To</th><th>Days</th><th>Reason</th><th>Status</th>{showActions&&<th>Actions</th>}</tr></thead>
-        <tbody>
-          {leaves.map(l => (
-            <tr key={l.id}>
-              <td className="td-primary">{l.applicant_name}</td>
-              <td style={{textTransform:'capitalize'}}><span className={`badge ${l.applicant_role==='lecturer'?'badge-info':'badge-approved'}`}>{l.applicant_role}</span></td>
-              <td style={{textTransform:'capitalize'}}>{l.leave_type}</td>
-              <td>{l.from_date}</td><td>{l.to_date}</td><td>{l.days}d</td>
-              <td className="td-clip">{l.reason}</td>
-              <td><span className={statusBadge(l.status)}>{l.status}</span></td>
-              {showActions && (
-                <td>
-                  {(l.status==='Pending with Management'||l.status==='Forwarded to Management') && (
-                    <div style={{display:'flex', gap:6}}>
-                      <button
-                        className="btn btn-sm btn-success"
-                        style={{padding:'.4rem .9rem', fontWeight:600, minWidth:80}}
-                        onClick={()=>{setModal(l);setModalAction('approve');setRemarks('')}}>
-                        Approve
-                      </button>
-                      <button
-                        className="btn btn-sm btn-danger"
-                        style={{padding:'.4rem .9rem', fontWeight:600, minWidth:70}}
-                        onClick={()=>{setModal(l);setModalAction('reject');setRemarks('')}}>
-                        Reject
-                      </button>
-                    </div>
-                  )}
-                </td>
-              )}
-            </tr>
-          ))}
-          {!leaves.length && <tr><td colSpan={showActions?9:8}><div className="empty-state"><p>No records</p></div></td></tr>}
-        </tbody>
-      </table>
-    </div>
-  )
+
+
 
   return (
     <div className="dash-layout">
@@ -176,7 +178,7 @@ export default function ManagementDashboard() {
                 <div className="card-title">Lecturer Leave Requests</div>
                 <button className="btn btn-ghost btn-sm" onClick={()=>setPage('lecturer-leaves')}>View All</button>
               </div>
-              <LeaveTable leaves={lecLeaves.filter(l=>l.status==='Pending with Management').slice(0,5)} showActions={true} />
+              <LeaveTable leaves={lecLeaves.filter(l=>l.status==='Pending with Management').slice(0,5)} showActions={true} onAction={(action, l) => {setModal(l);setModalAction(action);setRemarks('')}} />
             </div>
           </div>
         )}
@@ -304,7 +306,7 @@ export default function ManagementDashboard() {
         {page === 'lecturer-leaves' && (
           <div className="fade-in">
             <div className="topbar"><div className="topbar-left"><h1>Lecturer Leave Requests</h1><p>Approve or reject lecturer leaves</p></div></div>
-            <div className="card"><LeaveTable leaves={lecLeaves} showActions={true} /></div>
+            <div className="card"><LeaveTable leaves={lecLeaves} showActions={true} onAction={(action, l) => {setModal(l);setModalAction(action);setRemarks('')}} /></div>
           </div>
         )}
 
