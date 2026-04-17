@@ -94,11 +94,10 @@ export default function LecturerDashboard() {
                 <p>Lecturer leave management overview</p>
               </div>
             </div>
-            <div className="stats-grid">
+            <div className="stats-grid" style={{gridTemplateColumns:'repeat(3,1fr)'}}>
               <div className="stat-card c-yellow"><div className="stat-icon">PND</div><div className="stat-value">{pending.length}</div><div className="stat-label">Pending Requests</div><div className="stat-sub">student leaves</div></div>
               <div className="stat-card c-teal"><div className="stat-icon">APR</div><div className="stat-value">{requests.filter(l=>l.status==='Approved by Lecturer').length}</div><div className="stat-label">Approved</div><div className="stat-sub">by you</div></div>
-              <div className="stat-card c-blue"><div className="stat-icon">FWD</div><div className="stat-value">{requests.filter(l=>l.status==='Forwarded to Management').length}</div><div className="stat-label">Forwarded</div><div className="stat-sub">to management</div></div>
-              <div className="stat-card c-red"><div className="stat-icon">DOC</div><div className="stat-value">{myLeaves.length}</div><div className="stat-label">My Leaves</div><div className="stat-sub">applied</div></div>
+              <div className="stat-card c-red"><div className="stat-icon">REJ</div><div className="stat-value">{requests.filter(l=>l.status==='Rejected by Lecturer').length}</div><div className="stat-label">Rejected</div><div className="stat-sub">by you</div></div>
             </div>
             <div className="grid-2-1">
               <div className="card">
@@ -118,7 +117,6 @@ export default function LecturerDashboard() {
                         <td style={{display:'flex',gap:6}}>
                           <button className="btn btn-sm btn-success" style={{minWidth:70,fontWeight:600}} onClick={() => openModal(l,'approve')}>Approve</button>
                           <button className="btn btn-sm btn-danger"  style={{minWidth:60,fontWeight:600}} onClick={() => openModal(l,'reject')}>Reject</button>
-                          <button className="btn btn-sm" style={{background:'var(--blue-dim)',color:'var(--blue)',border:'1px solid rgba(96,165,250,.25)',padding:'.38rem .7rem',fontSize:'.78rem',borderRadius:'var(--r-s)',cursor:'pointer',fontWeight:600}} onClick={() => openModal(l,'forward')}>Forward</button>
                         </td>
                       </tr>
                     ))}
@@ -133,8 +131,7 @@ export default function LecturerDashboard() {
                   {label:'Pending',   val: pending.length,                                              color:'var(--pending)'},
                   {label:'Approved',  val: requests.filter(l=>l.status==='Approved by Lecturer').length, color:'var(--approved)'},
                   {label:'Rejected',  val: requests.filter(l=>l.status==='Rejected by Lecturer').length, color:'var(--rejected)'},
-                  {label:'Forwarded', val: requests.filter(l=>l.status==='Forwarded to Management').length, color:'var(--blue)'},
-                  {label:'My Leaves', val: myLeaves.length},
+                                    {label:'My Leaves', val: myLeaves.length},
                 ].map(d => (
                   <div key={d.label} className="qs-row">
                     <span className="qs-label">{d.label}</span>
@@ -146,10 +143,10 @@ export default function LecturerDashboard() {
           </div>
         )}
 
-        {/* ── STUDENT REQUESTS ── */}
+        {/* ── LEAVE REQUESTS (merged) ── */}
         {page === 'requests' && (
           <div className="fade-in">
-            <div className="topbar"><div className="topbar-left"><h1>Student Leave Requests</h1><p>Requests from your assigned classes</p></div></div>
+            <div className="topbar"><div className="topbar-left"><h1>Leave Requests</h1><p>All student leave requests from your assigned classes</p></div></div>
             <div className="card">
               <div className="table-wrap">
                 <table>
@@ -165,10 +162,9 @@ export default function LecturerDashboard() {
                         <td><span className={statusBadge(l.status)}>{l.status}</span></td>
                         <td>
                           {l.status === 'Pending with Lecturer' && (
-                            <div style={{display:'flex',gap:4}}>
-                              <button className="btn btn-sm btn-success" onClick={() => openModal(l,'approve')}>Approve</button>
-                              <button className="btn btn-sm btn-danger"  onClick={() => openModal(l,'reject')}> Reject</button>
-                              <button className="btn btn-sm" style={{background:'var(--blue-dim)',color:'var(--blue)',border:'1px solid rgba(96,165,250,.25)',padding:'.38rem .7rem',fontSize:'.78rem',borderRadius:'var(--r-s)',cursor:'pointer'}} onClick={() => openModal(l,'forward')}>Forward</button>
+                            <div style={{display:'flex',gap:6}}>
+                              <button className="btn btn-sm btn-success" style={{minWidth:70,fontWeight:600}} onClick={() => openModal(l,'approve')}>Approve</button>
+                              <button className="btn btn-sm btn-danger"  style={{minWidth:60,fontWeight:600}} onClick={() => openModal(l,'reject')}>Reject</button>
                             </div>
                           )}
                         </td>
@@ -181,25 +177,6 @@ export default function LecturerDashboard() {
             </div>
           </div>
         )}
-
-        {/* ── ALL REQUESTS ── */}
-        {page === 'all-requests' && (
-          <div className="fade-in">
-            <div className="topbar"><div className="topbar-left"><h1>All Requests</h1><p>Complete history of student leave requests</p></div></div>
-            <div className="card">
-              <div className="table-wrap">
-                <table>
-                  <thead><tr><th>Student</th><th>Class</th><th>Type</th><th>From</th><th>To</th><th>Days</th><th>Status</th><th>Remarks</th></tr></thead>
-                  <tbody>
-                    {requests.map(l => (
-                      <tr key={l.id}>
-                        <td className="td-primary">{l.applicant_name}</td>
-                        <td>{l.class_name}</td>
-                        <td style={{textTransform:'capitalize'}}>{l.leave_type}</td>
-                        <td>{l.from_date}</td><td>{l.to_date}</td><td>{l.days}d</td>
-                        <td><span className={statusBadge(l.status)}>{l.status}</span></td>
-                        <td className="td-muted td-clip">{l.remarks||'—'}</td>
-                      </tr>
                     ))}
                     {!requests.length && <tr><td colSpan={8}><div className="empty-state"><p>No records</p></div></td></tr>}
                   </tbody>
@@ -329,8 +306,7 @@ export default function LecturerDashboard() {
             <div className="modal-actions">
               {modalAction==='approve' && <button className="btn btn-success" onClick={confirmAction}>Approve</button>}
               {modalAction==='reject'  && <button className="btn btn-danger"  onClick={confirmAction}> Reject</button>}
-              {modalAction==='forward' && <button className="btn" style={{background:'var(--blue-dim)',color:'var(--blue)',border:'1px solid rgba(96,165,250,.25)'}} onClick={confirmAction}>Forward to Management</button>}
-              <button className="btn btn-secondary" onClick={()=>setModal(null)}>Cancel</button>
+                            <button className="btn btn-secondary" onClick={()=>setModal(null)}>Cancel</button>
             </div>
           </div>
         </div>
@@ -338,6 +314,7 @@ export default function LecturerDashboard() {
     </div>
   )
 }
+
 
 
 

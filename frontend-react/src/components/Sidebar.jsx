@@ -11,8 +11,7 @@ const NAV = {
   ],
   lecturer: [
     { id:'dashboard',     label:'Dashboard' },
-    { id:'requests',      label:'Student Requests', badge:true },
-    { id:'all-requests',  label:'All Requests' },
+    { id:'requests',      label:'Leave Requests', badge:true },
     { id:'apply',         label:'Apply My Leave' },
     { id:'my-leaves',     label:'My Leave History' },
     { id:'profile',       label:'Profile' },
