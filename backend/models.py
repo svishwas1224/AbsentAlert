@@ -9,7 +9,7 @@ class Student(db.Model):
     password     = db.Column(db.String(200), nullable=False)
     student_name = db.Column(db.String(100))
     department   = db.Column(db.String(100), nullable=False)
-    class_name   = db.Column(db.String(50), nullable=False)
+    class_name   = db.Column(db.String(50))
     semester     = db.Column(db.String(20))
     created_at   = db.Column(db.DateTime, default=datetime.utcnow)
 
@@ -53,13 +53,10 @@ class Class(db.Model):
     id         = db.Column(db.Integer, primary_key=True)
     class_name = db.Column(db.String(50), nullable=False)
     department = db.Column(db.String(100))
-    semester   = db.Column(db.String(20))
-    section    = db.Column(db.String(10))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     def to_dict(self):
-        return dict(id=self.id, class_name=self.class_name, department=self.department,
-                    semester=self.semester, section=self.section)
+        return dict(id=self.id, class_name=self.class_name, department=self.department)
 
 
 class LecturerAssignment(db.Model):

@@ -8,103 +8,51 @@ const ROLES = [
   { key: 'management', label: 'Management', color: 'var(--purple)' },
 ]
 
-const S = {
-  page: {
-    display: 'flex', alignItems: 'center', justifyContent: 'center',
-    minHeight: '100vh', padding: '1.5rem', position: 'relative', zIndex: 1,
-  },
-  wrap: { width: '100%', maxWidth: '480px' },
-  brand: { textAlign: 'center', marginBottom: '2rem' },
-  logo: (color) => ({
-    width: 56, height: 56,
-    background: `rgba(45,212,191,.12)`,
-    border: `1.5px solid ${color}`,
-    borderRadius: 16,
-    display: 'flex', alignItems: 'center', justifyContent: 'center',
-    margin: '0 auto 1rem',
-    fontFamily: "'Sora',sans-serif", fontWeight: 700, fontSize: '1.1rem',
-    color: color, letterSpacing: 1, transition: 'all .3s',
-  }),
-  card: {
-    background: 'var(--surface)',
-    border: '1px solid var(--border)',
-    borderRadius: 22,
-    padding: '2rem',
-    boxShadow: 'var(--shadow-lg)',
-  },
-  roleTabs: {
-    display: 'flex', gap: 4,
-    background: 'var(--bg-2)',
-    borderRadius: 13, padding: 4,
-    marginBottom: '1.5rem',
-    border: '1px solid var(--border)',
-  },
-  roleBtn: (active, color) => ({
-    flex: 1, padding: '.55rem .25rem',
-    border: `1px solid ${active ? color : 'transparent'}`,
-    background: active ? color + '15' : 'transparent',
-    color: active ? color : 'var(--text-3)',
-    fontFamily: "'Inter',sans-serif", fontSize: '.82rem', fontWeight: 600,
-    cursor: 'pointer', borderRadius: 10, transition: 'all .22s', whiteSpace: 'nowrap',
-  }),
-  modeTabs: {
-    display: 'flex', gap: 4,
-    background: 'var(--bg-2)',
-    borderRadius: 10, padding: 3,
-    marginBottom: '1.5rem',
-    border: '1px solid var(--border)',
-  },
-  modeBtn: (active, color) => ({
-    flex: 1, padding: '.5rem',
-    border: 'none',
-    background: active ? color + '15' : 'transparent',
-    color: active ? color : 'var(--text-3)',
-    fontFamily: "'Inter',sans-serif", fontSize: '.85rem', fontWeight: 600,
-    cursor: 'pointer', borderRadius: 8, transition: 'all .2s', textTransform: 'capitalize',
-  }),
-  // ── Alert boxes ──
-  alertError: {
-    display: 'flex', alignItems: 'center', gap: 12,
-    color: '#dc2626',
-    fontSize: '.9rem', fontWeight: 600,
-    margin: '0 0 1rem 0',
-    padding: '1rem 1.25rem',
-    background: '#fee2e2',
-    border: '2px solid #ef4444',
-    borderRadius: 12,
-    lineHeight: 1.5,
-  },
-  alertSuccess: {
-    display: 'flex', alignItems: 'center', gap: 12,
-    color: '#059669',
-    fontSize: '.9rem', fontWeight: 600,
-    margin: '0 0 1rem 0',
-    padding: '1rem 1.25rem',
-    background: '#d1fae5',
-    border: '2px solid #10b981',
-    borderRadius: 12,
-    lineHeight: 1.5,
-  },
-  alertIcon: {
-    flexShrink: 0, width: 24, height: 24,
-    borderRadius: '50%', display: 'flex',
-    alignItems: 'center', justifyContent: 'center',
-    fontSize: '.9rem', fontWeight: 700,
-    background: '#fff',
-  },
-  submitBtn: (color) => ({
-    width: '100%', padding: '.95rem',
-    marginTop: '1rem',
-    background: color,
-    color: '#ffffff',
-    border: 'none', borderRadius: 12,
-    fontFamily: "'Inter',sans-serif",
-    fontSize: '1rem', fontWeight: 700,
-    cursor: 'pointer', transition: 'all .2s',
-    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-    letterSpacing: '.4px',
-    boxShadow: `0 4px 12px ${color}40`,
-  }),
+/* ── Eye icon SVG ── */
+const EyeOpen = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+    <circle cx="12" cy="12" r="3"/>
+  </svg>
+)
+const EyeOff = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>
+    <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>
+    <line x1="1" y1="1" x2="23" y2="23"/>
+  </svg>
+)
+
+/* ── Password input with eye toggle ── */
+function PasswordInput({ value, onChange, onKeyDown, placeholder }) {
+  const [show, setShow] = useState(false)
+  return (
+    <div style={{ position:'relative' }}>
+      <input
+        className="form-control"
+        type={show ? 'text' : 'password'}
+        value={value}
+        onChange={onChange}
+        onKeyDown={onKeyDown}
+        placeholder={placeholder || 'Enter password'}
+        style={{ paddingRight: '2.75rem' }}
+      />
+      <button
+        type="button"
+        onClick={() => setShow(s => !s)}
+        style={{
+          position:'absolute', right:10, top:'50%', transform:'translateY(-50%)',
+          background:'none', border:'none', cursor:'pointer',
+          color:'var(--text-3)', display:'flex', alignItems:'center', padding:4,
+          transition:'color .2s',
+        }}
+        onMouseEnter={e => e.currentTarget.style.color = 'var(--text-1)'}
+        onMouseLeave={e => e.currentTarget.style.color = 'var(--text-3)'}
+      >
+        {show ? <EyeOff /> : <EyeOpen />}
+      </button>
+    </div>
+  )
 }
 
 export default function Login() {
@@ -129,17 +77,13 @@ export default function Login() {
         if (role === 'management') res = await api.managementLogin({ email: form.email, password: form.password })
         setUser(res.user)
       } else {
-        // Only students can self-register
-        if (role === 'student') {
-          await api.studentRegister({
-            roll_no: form.roll_no, email: form.email, password: form.password,
-            student_name: form.student_name, department: form.department,
-            class_name: form.class_name, semester: form.semester,
-          })
-          setForm({})
-          setMode('login')
-          setSuccess('Registration successful! You can now sign in.')
-        }
+        await api.studentRegister({
+          roll_no: form.roll_no, email: form.email, password: form.password,
+          student_name: form.student_name, department: form.department,
+          class_name: form.class_name || '',
+        })
+        setForm({}); setMode('login')
+        setSuccess('Registration successful! You can now sign in.')
       }
     } catch (e) {
       setError(e.message || 'Something went wrong. Please try again.')
@@ -148,63 +92,77 @@ export default function Login() {
     }
   }
 
-  const switchRole = (r) => {
-    setRole(r); setMode('login'); setForm({}); setError(''); setSuccess('')
-  }
+  const switchRole = (r) => { setRole(r); setMode('login'); setForm({}); setError(''); setSuccess('') }
+  const switchMode = (m) => { setMode(m); setForm({}); setError(''); setSuccess('') }
 
-  const switchMode = (m) => {
-    setMode(m); setForm({}); setError(''); setSuccess('')
+  const card = {
+    background:'var(--surface)', border:'1px solid var(--border)',
+    borderRadius:22, padding:'2rem', boxShadow:'var(--shadow-lg)',
   }
+  const roleBtn = (active) => ({
+    flex:1, padding:'.55rem .25rem',
+    border:`1px solid ${active ? activeColor : 'transparent'}`,
+    background: active ? activeColor + '15' : 'transparent',
+    color: active ? activeColor : 'var(--text-3)',
+    fontFamily:"'Inter',sans-serif", fontSize:'.82rem', fontWeight:600,
+    cursor:'pointer', borderRadius:10, transition:'all .22s', whiteSpace:'nowrap',
+  })
+  const modeBtn = (active) => ({
+    flex:1, padding:'.5rem', border:'none',
+    background: active ? activeColor + '15' : 'transparent',
+    color: active ? activeColor : 'var(--text-3)',
+    fontFamily:"'Inter',sans-serif", fontSize:'.85rem', fontWeight:600,
+    cursor:'pointer', borderRadius:8, transition:'all .2s',
+  })
 
   return (
-    <div style={S.page}>
-      <div className="fade-up" style={S.wrap}>
+    <div style={{ display:'flex', alignItems:'center', justifyContent:'center', minHeight:'100vh', padding:'1.5rem', position:'relative', zIndex:1 }}>
+      <div className="fade-up" style={{ width:'100%', maxWidth:'480px' }}>
 
         {/* Brand */}
-        <div style={S.brand}>
-          <img src="/logo.svg" alt="AbsentAlert Logo"
-            style={{ width: 80, height: 80, margin: '0 auto 0.75rem', display: 'block' }} />
+        <div style={{ textAlign:'center', marginBottom:'2rem' }}>
+          <img src="/logo.svg" alt="AbsentAlert" style={{ width:80, height:80, margin:'0 auto 0.75rem', display:'block' }} />
           <h1 style={{ fontFamily:"'Sora',sans-serif", fontSize:'2rem', letterSpacing:'-.5px', color:'var(--text-1)' }}>
-            Absent<span style={{ color: '#1d4ed8' }}>Alert</span>
+            Absent<span style={{ color:'#1d4ed8' }}>Alert</span>
           </h1>
           <p style={{ color:'var(--text-3)', fontSize:'.875rem', marginTop:'.3rem' }}>
             Absence Management &amp; Notification System
           </p>
         </div>
 
-        <div style={S.card}>
+        <div style={card}>
 
           {/* Role tabs */}
-          <div style={S.roleTabs}>
+          <div style={{ display:'flex', gap:4, background:'var(--bg-2)', borderRadius:13, padding:4, marginBottom:'1.5rem', border:'1px solid var(--border)' }}>
             {ROLES.map(r => (
-              <button key={r.key} onClick={() => switchRole(r.key)} style={S.roleBtn(role === r.key, r.color)}>
-                {r.label}
-              </button>
+              <button key={r.key} onClick={() => switchRole(r.key)} style={roleBtn(role === r.key)}>{r.label}</button>
             ))}
           </div>
 
-          {/* Login / Register toggle — only for students */}
+          {/* Sign In / Register toggle — students only */}
           {role === 'student' && (
-            <div style={S.modeTabs}>
-              {['login', 'register'].map(m => (
-                <button key={m} onClick={() => switchMode(m)} style={S.modeBtn(mode === m, activeColor)}>
+            <div style={{ display:'flex', gap:4, background:'var(--bg-2)', borderRadius:10, padding:3, marginBottom:'1.5rem', border:'1px solid var(--border)' }}>
+              {['login','register'].map(m => (
+                <button key={m} onClick={() => switchMode(m)} style={modeBtn(mode === m)}>
                   {m === 'login' ? 'Sign In' : 'Register'}
                 </button>
               ))}
             </div>
           )}
 
+          {/* Success */}
           {success && (
-            <div style={S.alertSuccess}>
-              <div style={{ ...S.alertIcon, background:'#a7f3d0', color:'#065f46' }}>OK</div>
-              <span>{success}</span>
+            <div style={{ display:'flex', alignItems:'center', gap:10, color:'#059669', fontSize:'.9rem', fontWeight:600, margin:'0 0 1rem', padding:'1rem 1.25rem', background:'#d1fae5', border:'2px solid #10b981', borderRadius:12 }}>
+              <span style={{ width:24, height:24, borderRadius:'50%', background:'#a7f3d0', color:'#065f46', display:'flex', alignItems:'center', justifyContent:'center', fontWeight:700, flexShrink:0 }}>OK</span>
+              {success}
             </div>
           )}
 
+          {/* Error */}
           {error && (
-            <div style={S.alertError}>
-              <div style={{ ...S.alertIcon, background:'#fecaca', color:'#991b1b' }}>!</div>
-              <span>{error}</span>
+            <div style={{ display:'flex', alignItems:'center', gap:10, color:'#dc2626', fontSize:'.9rem', fontWeight:600, margin:'0 0 1rem', padding:'1rem 1.25rem', background:'#fee2e2', border:'2px solid #ef4444', borderRadius:12 }}>
+              <span style={{ width:24, height:24, borderRadius:'50%', background:'#fecaca', color:'#991b1b', display:'flex', alignItems:'center', justifyContent:'center', fontWeight:700, flexShrink:0 }}>!</span>
+              {error}
             </div>
           )}
 
@@ -227,9 +185,14 @@ export default function Login() {
               )}
               <div className="form-group">
                 <label className="form-label">Password</label>
-                <input className="form-control" type="password" value={form.password || ''} onChange={e => set('password', e.target.value)}
-                  placeholder="Enter your password" onKeyDown={e => e.key === 'Enter' && handleSubmit()} />
+                <PasswordInput value={form.password || ''} onChange={e => set('password', e.target.value)}
+                  onKeyDown={e => e.key === 'Enter' && handleSubmit()} placeholder="Enter your password" />
               </div>
+              {role === 'lecturer' && (
+                <div style={{ fontSize:'.78rem', color:'#1e40af', padding:'.65rem .875rem', background:'#dbeafe', border:'1px solid #3b82f6', borderRadius:8, marginBottom:'1rem', lineHeight:1.5 }}>
+                  Lecturer accounts are created by Management. Contact your administrator if you do not have an account.
+                </div>
+              )}
             </>
           )}
 
@@ -261,64 +224,26 @@ export default function Login() {
                   </select>
                 </div>
                 <div className="form-group">
-                  <label className="form-label">Class <span style={{color:'var(--rejected)'}}>*</span></label>
+                  <label className="form-label">Class <span style={{color:'var(--text-3)',fontWeight:400}}>(optional)</span></label>
                   <select className="form-control" value={form.class_name || ''} onChange={e => set('class_name', e.target.value)}>
                     <option value="">Select class</option>
-                    <optgroup label="BCA — Computer Science">
-                      <option value="BCA-1A">BCA-1A (Semester 1)</option>
-                      <option value="BCA-2A">BCA-2A (Semester 3)</option>
-                      <option value="BCA-3A">BCA-3A (Semester 5)</option>
-                    </optgroup>
-                    <optgroup label="BBA — Business Administration">
-                      <option value="BBA-1A">BBA-1A (Semester 1)</option>
-                      <option value="BBA-2A">BBA-2A (Semester 3)</option>
-                      <option value="BBA-3A">BBA-3A (Semester 5)</option>
-                    </optgroup>
-                    <optgroup label="BCom — Commerce">
-                      <option value="BCom-1A">BCom-1A (Semester 1)</option>
-                      <option value="BCom-2A">BCom-2A (Semester 3)</option>
-                      <option value="BCom-3A">BCom-3A (Semester 5)</option>
-                    </optgroup>
+                    <optgroup label="BCA"><option value="BCA-1">BCA-1</option><option value="BCA-2">BCA-2</option><option value="BCA-3">BCA-3</option></optgroup>
+                    <optgroup label="BBA"><option value="BBA-1">BBA-1</option><option value="BBA-2">BBA-2</option><option value="BBA-3">BBA-3</option></optgroup>
+                    <optgroup label="BCom"><option value="BCom-1">BCom-1</option><option value="BCom-2">BCom-2</option><option value="BCom-3">BCom-3</option></optgroup>
                   </select>
                 </div>
               </div>
-              <div className="form-grid">
-                <div className="form-group">
-                  <label className="form-label">Semester</label>
-                  <select className="form-control" value={form.semester || ''} onChange={e => set('semester', e.target.value)}>
-                    <option value="">Select semester</option>
-                    <option value="1">Semester 1</option>
-                    <option value="2">Semester 2</option>
-                    <option value="3">Semester 3</option>
-                    <option value="4">Semester 4</option>
-                    <option value="5">Semester 5</option>
-                    <option value="6">Semester 6</option>
-                  </select>
-                </div>
-                <div className="form-group">
-                  <label className="form-label">Password <span style={{color:'var(--rejected)'}}>*</span></label>
-                  <input className="form-control" type="password" value={form.password || ''} onChange={e => set('password', e.target.value)} />
-                </div>
+              <div className="form-group">
+                <label className="form-label">Password <span style={{color:'var(--rejected)'}}>*</span></label>
+                <PasswordInput value={form.password || ''} onChange={e => set('password', e.target.value)} placeholder="Create a password" />
               </div>
             </>
           )}
 
-          {/* ── LECTURER REGISTER — removed, admin adds lecturers ── */}
-
-          {/* ── LECTURER LOGIN NOTE ── */}
-          {mode === 'login' && role === 'lecturer' && (
-            <div style={{ fontSize:'.78rem', color:'#1e40af', padding:'.65rem .875rem',
-              background:'#dbeafe', border:'1px solid #3b82f6',
-              borderRadius:8, marginBottom:'1rem', lineHeight:1.5 }}>
-              Lecturer accounts are created by Management. Contact your administrator if you do not have an account.
-            </div>
-          )}
-
-          {/* Submit button */}
-          <button onClick={handleSubmit} disabled={loading} style={S.submitBtn(activeColor)}>
-            {loading
-              ? <><span className="spinner" /> Processing…</>
-              : mode === 'login' ? 'Sign In' : 'Create Account'}
+          {/* Submit */}
+          <button onClick={handleSubmit} disabled={loading}
+            style={{ width:'100%', padding:'.95rem', marginTop:'1rem', background:activeColor, color:'#fff', border:'none', borderRadius:12, fontFamily:"'Inter',sans-serif", fontSize:'1rem', fontWeight:700, cursor:'pointer', transition:'all .2s', display:'flex', alignItems:'center', justifyContent:'center', gap:8, boxShadow:`0 4px 12px ${activeColor}40` }}>
+            {loading ? <><span className="spinner" /> Processing…</> : mode === 'login' ? 'Sign In' : 'Create Account'}
           </button>
 
         </div>
@@ -326,6 +251,3 @@ export default function Login() {
     </div>
   )
 }
-
-
-

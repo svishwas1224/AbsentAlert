@@ -30,7 +30,7 @@ export default function ManagementDashboard() {
   const [remarks, setRemarks]     = useState('')
 
   // Forms
-  const [newClass,   setNewClass]   = useState({ class_name:'', department:'', semester:'', section:'' })
+  const [newClass, setNewClass] = useState({ class_name:'', department:'' })
   const [newAssign,  setNewAssign]  = useState({ lecturer_id:'', class_id:'', is_mentor:false })
   const [newLecturer, setNewLecturer] = useState({ lecturer_name:'', email:'', password:'', department:'', lecturer_id:'' })
 
@@ -247,7 +247,10 @@ export default function ManagementDashboard() {
               <div className="card" style={{marginBottom:'1rem'}}>
                 <div className="card-title" style={{marginBottom:'1.25rem'}}>Add Class</div>
                 <div className="form-grid">
-                  <div className="form-group"><label className="form-label">Class Name *</label><input className="form-control" value={newClass.class_name} onChange={e=>setNewClass(c=>({...c,class_name:e.target.value}))} placeholder="e.g. BCA-3A" /></div>
+                  <div className="form-group">
+                    <label className="form-label">Class Name *</label>
+                    <input className="form-control" value={newClass.class_name} onChange={e=>setNewClass(c=>({...c,class_name:e.target.value}))} placeholder="e.g. BCA-3" />
+                  </div>
                   <div className="form-group">
                     <label className="form-label">Department</label>
                     <select className="form-control" value={newClass.department} onChange={e=>setNewClass(c=>({...c,department:e.target.value}))}>
@@ -257,8 +260,6 @@ export default function ManagementDashboard() {
                       <option value="Commerce">Commerce (BCom)</option>
                     </select>
                   </div>
-                  <div className="form-group"><label className="form-label">Semester</label><input className="form-control" value={newClass.semester} onChange={e=>setNewClass(c=>({...c,semester:e.target.value}))} placeholder="1-6" /></div>
-                  <div className="form-group"><label className="form-label">Section</label><input className="form-control" value={newClass.section} onChange={e=>setNewClass(c=>({...c,section:e.target.value}))} placeholder="A" /></div>
                 </div>
                 <button className="btn btn-primary btn-sm" onClick={addClass}>Add Class</button>
               </div>
@@ -266,7 +267,7 @@ export default function ManagementDashboard() {
                 <div className="card-title" style={{marginBottom:'1rem'}}>Classes ({classes.length})</div>
                 {classes.map(c => (
                   <div key={c.id} className="qs-row">
-                    <div><span style={{color:'var(--text-1)',fontWeight:500}}>{c.class_name}</span> <span className="td-muted"> · {c.department} · Sem {c.semester}</span></div>
+                    <div><span style={{color:'var(--text-1)',fontWeight:500}}>{c.class_name}</span> <span className="td-muted"> · {c.department}</span></div>
                     <button className="btn btn-sm btn-danger" onClick={async()=>{await api.deleteClass(c.id);await load()}}>Remove</button>
                   </div>
                 ))}

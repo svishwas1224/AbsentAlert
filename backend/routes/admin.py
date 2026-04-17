@@ -17,8 +17,7 @@ def create_class():
     d = request.get_json()
     if not d.get('class_name'):
         return jsonify({'error': 'class_name required'}), 400
-    c = Class(class_name=d['class_name'], department=d.get('department',''),
-              semester=d.get('semester',''), section=d.get('section',''))
+    c = Class(class_name=d['class_name'], department=d.get('department', ''))
     db.session.add(c); db.session.commit()
     return jsonify(c.to_dict()), 201
 

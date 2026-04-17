@@ -9,7 +9,7 @@ auth_bp = Blueprint('auth', __name__)
 @auth_bp.route('/student/register', methods=['POST'])
 def student_register():
     d = request.get_json()
-    required = ['roll_no', 'email', 'password', 'department', 'class_name']
+    required = ['roll_no', 'email', 'password', 'department']
     for f in required:
         if not d.get(f):
             return jsonify({'error': f'{f} is required'}), 400
