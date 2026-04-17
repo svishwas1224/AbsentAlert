@@ -20,7 +20,6 @@ export default function ManagementDashboard() {
   const [stats, setStats]         = useState({})
   const [classes, setClasses]     = useState([])
   const [lecturers, setLecturers] = useState([])
-  const [lecturers, setLecturers] = useState([])
   const [students, setStudents]   = useState([])
   const [assignments, setAssignments] = useState([])
   const [lecLeaves, setLecLeaves] = useState([])
